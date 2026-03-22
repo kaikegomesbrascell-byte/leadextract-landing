@@ -2,7 +2,9 @@ import Navbar from "@/components/landing/Navbar";
 import HeroSection from "@/components/landing/HeroSection";
 import FeaturesSection from "@/components/landing/FeaturesSection";
 import HowItWorksSection from "@/components/landing/HowItWorksSection";
+import LeadsExampleSection from "@/components/landing/LeadsExampleSection";
 import PricingSection from "@/components/landing/PricingSection";
+import FAQSection from "@/components/landing/FAQSection";
 import FooterCTA from "@/components/landing/FooterCTA";
 
 const Index = () => {
@@ -12,7 +14,9 @@ const Index = () => {
       <HeroSection />
       <FeaturesSection />
       <HowItWorksSection />
+      <LeadsExampleSection />
       <PricingSection />
+      <FAQSection />
       <FooterCTA />
     </div>
   );
