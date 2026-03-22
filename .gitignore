@@ -33,9 +33,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Downloads (não commitar o ZIP com o executável)
-downloads/
-*.zip
+# Downloads - permitir o ZIP para distribuição
+# downloads/
+# *.zip
 
 # Logs
 *.log
