@@ -5,12 +5,13 @@ import { useState } from "react";
 import { CheckoutModal } from "@/components/CheckoutModal";
 
 const benefits = [
-  "Extração ilimitada de leads",
-  "Exportação CSV e Excel",
-  "Validação de emails e telefones",
-  "Múltiplas fontes de dados",
+  "🛡️ Intervalos Humanos Inteligentes - Protege seu WhatsApp",
+  "Extração ilimitada de leads do Google Maps",
+  "Exportação CSV e Excel automática",
+  "Sistema anti-duplicatas inteligente",
+  "Feedback visual em tempo real",
   "Atualizações gratuitas vitalícias",
-  "Suporte via email",
+  "Suporte técnico via email",
 ];
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -58,7 +59,12 @@ const PricingSection = () => {
               </motion.span>
               <span className="text-muted-foreground">,00</span>
             </div>
-            <p className="mt-1 text-sm text-muted-foreground">pagamento único</p>
+            <div className="mt-3 inline-block rounded-lg bg-accent px-6 py-2">
+              <p className="text-xl font-bold uppercase tracking-wide text-white">
+                💳 PAGAMENTO ÚNICO
+              </p>
+            </div>
+            <p className="mt-2 text-sm text-muted-foreground">Sem mensalidades. Sem taxas recorrentes. Acesso vitalício.</p>
           </div>
 
           <ul className="mb-8 space-y-3 text-left">

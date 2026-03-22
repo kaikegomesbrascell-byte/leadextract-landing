@@ -8,6 +8,10 @@ import {
 const FAQSection = () => {
   const faqs = [
     {
+      question: "O que são Intervalos Humanos Inteligentes e por que são importantes?",
+      answer: "Intervalos Humanos Inteligentes são delays naturais e variações aleatórias entre cada ação do sistema (scroll, clique, leitura de dados). Isso simula o comportamento de uma pessoa real navegando no Google Maps, protegendo você de bloqueios e banimentos. Sem essa proteção, o Google Maps detecta que é um robô e bloqueia seu IP, e seu WhatsApp pode ser banido por spam ao enviar mensagens para leads extraídos de forma agressiva. É por isso que o sistema vale R$ 297,00 - ele protege seu investimento e garante extrações seguras a longo prazo."
+    },
+    {
       question: "Como funciona o Lead Extractor?",
       answer: "O Lead Extractor automatiza a busca de empresas no Google Maps. Você informa o nicho (ex: 'restaurantes') e a localização (ex: 'São Paulo'), e o sistema extrai automaticamente nome, telefone, site, endereço, nota e comentários de cada empresa encontrada."
     },
