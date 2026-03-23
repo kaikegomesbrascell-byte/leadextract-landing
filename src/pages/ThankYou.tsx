@@ -9,6 +9,16 @@ const ThankYou = () => {
   useEffect(() => {
     // Scroll to top on mount
     window.scrollTo(0, 0);
+    
+    // Event snippet for Compra conversion page
+    if (typeof window.gtag !== 'undefined') {
+      window.gtag('event', 'conversion', {
+        'send_to': 'AW-18030639277/mg8YCPyF4Y0cEK3x1pVD',
+        'value': 297.0,
+        'currency': 'BRL',
+        'transaction_id': ''
+      });
+    }
   }, []);
 
   const handleDownload = () => {
