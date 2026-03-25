@@ -334,61 +334,6 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               Voltar
             </Button>
           </div>
-        ) : paymentMethod === "pix" ? (
-          <div className="space-y-4">
-            <div className="flex flex-col items-center space-y-4">
-              <div className="rounded-lg border-2 border-border bg-white p-4">
-                {pixData?.qrCode && (
-                  <img
-                    src={`data:image/png;base64,${pixData.qrCode}`}
-                    alt="QR Code PIX"
-                    className="h-64 w-64"
-                  />
-                )}
-              </div>
-
-              <div className="w-full space-y-2">
-                <Label>Código PIX Copia e Cola</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={pixData?.pixCode || ""}
-                    readOnly
-                    className="font-mono text-xs"
-                  />
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="icon"
-                    onClick={copyPixCode}
-                  >
-                    {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  </Button>
-                </div>
-              </div>
-
-              <div className="rounded-lg bg-muted p-4 text-sm">
-                <p className="font-semibold mb-2">Como pagar:</p>
-                <ol className="list-decimal list-inside space-y-1 text-muted-foreground">
-                  <li>Abra o app do seu banco</li>
-                  <li>Escolha pagar com PIX</li>
-                  <li>Escaneie o QR Code ou cole o código</li>
-                  <li>Confirme o pagamento de R$ 1.000,00</li>
-                </ol>
-              </div>
-
-              <p className="text-xs text-center text-muted-foreground">
-                Após a confirmação do pagamento, você receberá o link de download por email.
-              </p>
-
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={() => setStep(2)}
-              >
-                Voltar para Métodos de Pagamento
-              </Button>
-            </div>
-          </div>
         )}
       </DialogContent>
     </Dialog>
