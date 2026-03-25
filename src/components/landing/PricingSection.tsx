@@ -160,7 +160,7 @@ const PricingSection = () => {
           </div>
 
           <p className="mt-3 text-xs" style={{ color: "hsl(220 15% 45%)" }}>
-            Pagamento seguro via cartão de crédito ou PIX
+            Pagamento seguro via PIX
           </p>
         </motion.div>
       </div>

@@ -15,14 +15,9 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState<"pix" | "card">("pix");
+  const [paymentMethod, setPaymentMethod] = useState<"pix">("pix");
   const [pixData, setPixData] = useState<{ qrCode: string; pixCode: string } | null>(null);
-  const [cardData, setCardData] = useState({
-    number: "",
-    name: "",
-    expiry: "",
-    cvv: "",
-  });
+  const [cardErrorMessage, setCardErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -80,7 +75,14 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
     setStep(2); // Ir para seleção de método de pagamento
   };
 
-  const handlePaymentMethodSelect = async (method: "pix" | "card") => {
+  const handleCardUnavailable = () => {
+    const message = "Desculpe, o pagamento com cartão está temporariamente fora do ar. Pedimos desculpas pelo transtorno e volte a tentar mais tarde.";
+    setCardErrorMessage(message);
+    alert(message);
+  };
+
+  const handlePaymentMethodSelect = async (method: "pix") => {
+    setCardErrorMessage("");
     setPaymentMethod(method);
     
     if (method === "pix") {
@@ -184,74 +186,25 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         setStep(3);
       } catch (error) {
         console.error("Erro no checkout PIX:", error);
-        alert("Erro ao processar pagamento PIX. Verifique sua conexão e tente novamente.");
+        const errorMsg = error instanceof Error ? error.message : "Falha ao conectar com o servidor de pagamento";
+        alert(
+          `Erro ao gerar QR Code PIX:\n\n${errorMsg}\n\nVerifique sua conexão de internet e tente novamente.`
+        );
+        setLoading(false);
+        setStep(2); // Volta para seleção de método
       } finally {
         setLoading(false);
       }
-    } else {
-      setStep(3); // Ir para formulário de cartão
     }
   };
 
-  const handleCardPayment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
 
-    try {
-      const response = await fetch("http://localhost:3001/api/payment/card", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          product: {
-            name: "Lead Extractor - Licença Completa",
-            price: 1000,
-          },
-          customer: {
-            name: formData.name,
-            email: formData.email,
-            document: formData.cpf.replace(/\D/g, ""),
-            phone: formData.phone.replace(/\D/g, ""),
-          },
-          payment: {
-            method: "credit_card",
-            card: {
-              number: cardData.number.replace(/\s/g, ""),
-              holder_name: cardData.name,
-              exp_month: cardData.expiry.split("/")[0],
-              exp_year: cardData.expiry.split("/")[1],
-              cvv: cardData.cvv,
-            },
-          },
-          trackProps: {
-            source: "landing-page",
-            product: "lead-extractor",
-          },
-        }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Erro ao processar pagamento com cartão");
-      }
-
-      const data = await response.json();
-      
-      alert("Pagamento aprovado! Você receberá o link de download por email.");
-      handleClose();
-    } catch (error) {
-      console.error("Erro no pagamento com cartão:", error);
-      alert("Erro ao processar pagamento com cartão. Verifique os dados e tente novamente.");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleClose = () => {
     setStep(1);
     setPixData(null);
+    setCardErrorMessage("");
     setPaymentMethod("pix");
-    setCardData({ number: "", name: "", expiry: "", cvv: "" });
     setFormData({ name: "", email: "", cpf: "", phone: "" });
     onOpenChange(false);
   };
@@ -261,10 +214,10 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>
-            {step === 1 ? "Finalizar Compra" : step === 2 ? "Escolha o Método de Pagamento" : paymentMethod === "pix" ? "Pagamento PIX" : "Pagamento com Cartão"}
+            {step === 1 ? "Finalizar Compra" : "Pagamento via PIX"}
           </DialogTitle>
           <DialogDescription>
-            {step === 1 ? "Preencha seus dados para continuar" : step === 2 ? "Selecione como deseja pagar" : paymentMethod === "pix" ? "Escaneie o QR Code ou copie o código PIX" : "Preencha os dados do seu cartão"}
+            {step === 1 ? "Preencha seus dados para continuar" : "Escaneie o QR Code ou copie o código PIX para pagar"}
           </DialogDescription>
         </DialogHeader>
 
@@ -333,42 +286,43 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               🔒 Seus dados estão seguros e criptografados
             </p>
           </form>
-        ) : step === 2 ? (
+        ) : (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                variant="outline"
-                className="h-32 flex flex-col gap-3 hover:border-accent hover:bg-accent/5"
-                onClick={() => handlePaymentMethodSelect("pix")}
-                disabled={loading}
-              >
-                {loading && paymentMethod === "pix" ? (
-                  <Loader2 className="h-8 w-8 animate-spin text-accent" />
-                ) : (
-                  <QrCode className="h-8 w-8 text-accent" />
-                )}
-                <div className="text-center">
-                  <p className="font-semibold">PIX</p>
-                  <p className="text-xs text-muted-foreground">Aprovação instantânea</p>
-                </div>
-              </Button>
+            <Button
+              variant="outline"
+              className="h-32 flex flex-col gap-3 hover:border-accent hover:bg-accent/5 w-full"
+              onClick={() => handlePaymentMethodSelect("pix")}
+              disabled={loading}
+            >
+              {loading && paymentMethod === "pix" ? (
+                <Loader2 className="h-8 w-8 animate-spin text-accent" />
+              ) : (
+                <QrCode className="h-8 w-8 text-accent" />
+              )}
+              <div className="text-center">
+                <p className="font-semibold">PIX</p>
+                <p className="text-xs text-muted-foreground">Aprovação instantânea</p>
+              </div>
+            </Button>
 
-              <Button
-                variant="outline"
-                className="h-32 flex flex-col gap-3 hover:border-accent hover:bg-accent/5"
-                onClick={() => handlePaymentMethodSelect("card")}
-                disabled={loading}
-              >
-                <CreditCard className="h-8 w-8 text-accent" />
-                <div className="text-center">
-                  <p className="font-semibold">Cartão</p>
-                  <p className="text-xs text-muted-foreground">Crédito ou Débito</p>
-                </div>
-              </Button>
-            </div>
+            <button
+              type="button"
+              className="w-full p-8 border-2 border-dashed border-destructive/30 rounded-xl bg-destructive/5 text-center"
+              onClick={handleCardUnavailable}
+            >
+              <CreditCard className="h-12 w-12 mx-auto mb-4 text-destructive/70" />
+              <h3 className="font-bold text-lg mb-2 text-destructive/90">Pagamento com Cartão Fora do Ar</h3>
+              <p className="text-sm text-muted-foreground mb-4">Desculpe, temporariamente indisponível. Use PIX para pagamento instantâneo.</p>
+            </button>
+
+            {cardErrorMessage && (
+              <div className="rounded-lg border border-destructive/80 bg-destructive/10 p-3 text-sm text-destructive">
+                {cardErrorMessage}
+              </div>
+            )}
 
             <div className="rounded-lg bg-muted p-4 text-center">
-              <p className="text-sm font-semibold mb-1">Valor Total</p>
+              <p className="text-sm font-semibold mb-1">Valor Mensal</p>
               <p className="text-2xl font-bold text-accent">R$ 1.000,00</p>
             </div>
 
@@ -435,91 +389,6 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               </Button>
             </div>
           </div>
-        ) : (
-          <form onSubmit={handleCardPayment} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="cardNumber">Número do Cartão *</Label>
-              <Input
-                id="cardNumber"
-                placeholder="0000 0000 0000 0000"
-                value={cardData.number}
-                onChange={(e) => setCardData({ ...cardData, number: formatCardNumber(e.target.value) })}
-                maxLength={19}
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="cardName">Nome no Cartão *</Label>
-              <Input
-                id="cardName"
-                placeholder="NOME COMO ESTÁ NO CARTÃO"
-                value={cardData.name}
-                onChange={(e) => setCardData({ ...cardData, name: e.target.value.toUpperCase() })}
-                required
-              />
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="expiry">Validade *</Label>
-                <Input
-                  id="expiry"
-                  placeholder="MM/AA"
-                  value={cardData.expiry}
-                  onChange={(e) => setCardData({ ...cardData, expiry: formatExpiry(e.target.value) })}
-                  maxLength={5}
-                  required
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="cvv">CVV *</Label>
-                <Input
-                  id="cvv"
-                  placeholder="000"
-                  type="password"
-                  value={cardData.cvv}
-                  onChange={(e) => setCardData({ ...cardData, cvv: e.target.value.replace(/\D/g, "") })}
-                  maxLength={4}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="rounded-lg bg-muted p-4">
-              <div className="flex justify-between items-center">
-                <span className="text-sm text-muted-foreground">Valor Total</span>
-                <span className="text-xl font-bold text-accent">R$ 1.000,00</span>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Processando Pagamento...
-                  </>
-                ) : (
-                  "Finalizar Pagamento"
-                )}
-              </Button>
-
-              <Button
-                type="button"
-                variant="outline"
-                className="w-full"
-                onClick={() => setStep(2)}
-              >
-                Voltar para Métodos de Pagamento
-              </Button>
-            </div>
-
-            <p className="text-xs text-center text-muted-foreground">
-              🔒 Pagamento seguro e criptografado
-            </p>
-          </form>
         )}
       </DialogContent>
     </Dialog>
