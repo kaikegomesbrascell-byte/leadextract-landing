@@ -1,0 +1,18 @@
+# LeadExtract Core Scraping Engine Dependencies
+
+# Browser automation with stealth capabilities
+playwright>=1.40.0
+playwright-stealth>=1.0.0
+
+# Async HTTP client
+aiohttp>=3.9.0
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# Data processing
+pandas>=2.1.0
+
+# Progress tracking
+tqdm>=4.66.0
