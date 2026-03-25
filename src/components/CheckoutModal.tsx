@@ -303,7 +303,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               🔒 Seus dados estão seguros e criptografados
             </p>
           </form>
-        ) : (
+        ) : step === 2 ? (
           <div className="space-y-4">
             <Button
               variant="outline"
@@ -349,6 +349,61 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               onClick={() => setStep(1)}
             >
               Voltar
+            </Button>
+          </div>
+        ) : (
+          // STEP 3 - Exibir QR Code e Chave PIX
+          <div className="space-y-4">
+            {pixData?.qrCode && (
+              <div className="flex justify-center">
+                <img
+                  src={`data:image/png;base64,${pixData.qrCode}`}
+                  alt="QR Code PIX"
+                  className="w-64 h-64 border-2 border-accent rounded-lg p-2 bg-white"
+                />
+              </div>
+            )}
+
+            <div className="rounded-lg bg-muted p-4 space-y-3">
+              <p className="text-sm font-semibold text-center">Código PIX</p>
+              <div className="bg-white rounded border border-border p-3 break-all font-mono text-xs leading-relaxed">
+                {pixData?.pixCode || "Gerando código PIX..."}
+              </div>
+              <Button
+                className="w-full gap-2"
+                onClick={copyPixCode}
+                disabled={!pixData?.pixCode}
+              >
+                {copied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copiado!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copiar Código PIX
+                  </>
+                )}
+              </Button>
+            </div>
+
+            <div className="rounded-lg bg-accent/10 p-4 text-sm text-center space-y-2">
+              <p className="font-semibold text-accent">Próximas Etapas:</p>
+              <ol className="text-left space-y-1 text-xs">
+                <li>✅ <strong>Escaneie o QR Code acima</strong> com seu banco/app de pagamento</li>
+                <li>✅ <strong>Ou copie a chave PIX</strong> e cole no seu banco</li>
+                <li>✅ <strong>Complete o pagamento</strong> no seu dispositivo</li>
+                <li>✅ <strong>Pronto!</strong> Você receberá acesso em segundos</li>
+              </ol>
+            </div>
+
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleClose}
+            >
+              Fechar
             </Button>
           </div>
         )}
