@@ -57,6 +57,135 @@ const PricingSection = () => {
           </p>
         </motion.div>
 
+        {/* MERCHAN COM DESCONTO IMPRESSIONANTE */}
+        <motion.div
+          className="mt-10 rounded-2xl p-6 relative overflow-hidden"
+          style={{
+            background: "linear-gradient(135deg, rgba(255,0,127,0.15) 0%, rgba(0,212,255,0.15) 100%)",
+            border: "2px solid rgba(255,0,127,0.5)",
+            boxShadow: "0 0 80px rgba(255,0,127,0.3), inset 0 0 60px rgba(0,212,255,0.1)",
+          }}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease, delay: 0.1 }}
+        >
+          {/* Efeito de spotlight */}
+          <div
+            className="absolute top-0 right-0 w-96 h-96 blur-3xl opacity-20 pointer-events-none"
+            style={{
+              background: "radial-gradient(circle, rgba(255,0,127,0.8) 0%, transparent 70%)",
+            }}
+          />
+          
+          <div className="relative z-10">
+            {/* Badge de urgência */}
+            <div className="flex justify-center mb-4">
+              <motion.div
+                className="inline-block rounded-full px-4 py-1.5"
+                style={{
+                  background: "linear-gradient(135deg, #ff007f, #ff4db8)",
+                  boxShadow: "0 0 20px rgba(255,0,127,0.6)",
+                }}
+                animate={{
+                  boxShadow: [
+                    "0 0 20px rgba(255,0,127,0.4)",
+                    "0 0 40px rgba(255,0,127,0.8)",
+                    "0 0 20px rgba(255,0,127,0.4)",
+                  ],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              >
+                <p className="text-xs font-bold uppercase tracking-widest text-white">
+                  🎯 OFERTA 87% OFF - MERCHAN DO DIA
+                </p>
+              </motion.div>
+            </div>
+
+            {/* Comparação de preços */}
+            <div className="flex items-center justify-center gap-6">
+              {/* Preço original */}
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, x: -20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease, delay: 0.2 }}
+              >
+                <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: "hsl(220 15% 55%)" }}>
+                  Valor Original
+                </p>
+                <p
+                  className="text-3xl font-extrabold mt-2 line-through decoration-2"
+                  style={{ color: "rgba(255,0,127,0.8)" }}
+                >
+                  R$ 7.983
+                </p>
+              </motion.div>
+
+              {/* Seta/Redução */}
+              <motion.div
+                animate={{ x: [0, 5, 0] }}
+                transition={{ duration: 1.5, repeat: Infinity }}
+              >
+                <div
+                  className="text-3xl font-bold px-4 py-2 rounded-lg"
+                  style={{
+                    background: "linear-gradient(135deg, #ff007f, #ff4db8)",
+                    color: "white",
+                  }}
+                >
+                  ➜
+                </div>
+              </motion.div>
+
+              {/* Preço com desconto */}
+              <motion.div
+                className="text-center"
+                initial={{ opacity: 0, x: 20 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, ease, delay: 0.3 }}
+              >
+                <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#00d4ff" }}>
+                  Agora por
+                </p>
+                <p
+                  className="text-4xl font-extrabold mt-2"
+                  style={{
+                    background: "linear-gradient(135deg, #00d4ff, #0099cc)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}
+                >
+                  R$ 1.000
+                </p>
+              </motion.div>
+            </div>
+
+            {/* Economia */}
+            <motion.div
+              className="mt-6 text-center p-4 rounded-lg"
+              style={{
+                background: "rgba(0,212,255,0.1)",
+                border: "1px solid rgba(0,212,255,0.3)",
+              }}
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease, delay: 0.4 }}
+            >
+              <p className="text-2xl font-extrabold" style={{ color: "#10b981" }}>
+                💰 Você economiza R$ 6.983
+              </p>
+              <p className="text-sm mt-2" style={{ color: "hsl(220 15% 55%)" }}>
+                Essa promoção é por tempo limitado. Aproveite enquanto dura!
+              </p>
+            </motion.div>
+          </div>
+        </motion.div>
+
         <motion.div
           className="mt-12 rounded-2xl p-8"
           style={{
