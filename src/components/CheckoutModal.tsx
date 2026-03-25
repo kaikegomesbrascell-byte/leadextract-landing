@@ -364,31 +364,41 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
               </div>
             )}
 
-            <div className="rounded-lg bg-muted p-4 space-y-3">
-              <p className="text-sm font-semibold text-center">Código PIX</p>
-              <div className="bg-white rounded-lg border-2 border-accent p-4 space-y-2">
-                <p className="text-xs text-muted-foreground text-center mb-2">Copie e cole no seu banco:</p>
-                <div 
-                  className="bg-white rounded border-2 border-accent/50 p-4 break-all font-mono text-sm font-bold text-foreground leading-relaxed cursor-pointer shadow-md"
-                  onClick={copyPixCode}
-                  title="Clique para copiar"
-                >
-                  {pixData?.pixCode || "Gerando código PIX..."}
+            <div className="rounded-lg bg-muted p-4 space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-base font-bold text-center text-foreground">Código PIX</h3>
+                <p className="text-xs text-muted-foreground text-center">Copie e cole a chave no seu banco</p>
+              </div>
+
+              {/* Caixa da Chave PIX - Super Visível */}
+              <div 
+                className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg border-2 border-blue-500 p-6 space-y-3 cursor-pointer hover:shadow-lg transition-shadow"
+                onClick={copyPixCode}
+                title="Clique para copiar"
+              >
+                <div className="flex items-start gap-3 min-h-24">
+                  <div className="flex-1">
+                    <p className="font-mono text-lg font-extrabold text-black break-all leading-loose">
+                      {pixData?.pixCode || "Gerando código PIX..."}
+                    </p>
+                  </div>
                 </div>
               </div>
+
+              {/* Botão de Copiar */}
               <Button
-                className="w-full gap-2"
+                className="w-full gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-6 text-base"
                 onClick={copyPixCode}
                 disabled={!pixData?.pixCode}
               >
                 {copied ? (
                   <>
-                    <Check className="h-4 w-4" />
-                    Copiado!
+                    <Check className="h-5 w-5" />
+                    Chave Copiada!
                   </>
                 ) : (
                   <>
-                    <Copy className="h-4 w-4" />
+                    <Copy className="h-5 w-5" />
                     Copiar Código PIX
                   </>
                 )}
