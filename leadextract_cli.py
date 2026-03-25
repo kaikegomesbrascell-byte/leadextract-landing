@@ -1,83 +1,43 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-LeadExtract Advanced 2.0 - Entry Point (CLI)
-Executável principal com interface de linha de comando
-"""
+"""CLI for LeadExtract Advanced Pipeline"""
 
-import sys
 import asyncio
+import argparse
+import sys
 from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).parent))
-
 from lead_extractor_advanced import PipelineLeadExtractor
 import pandas as pd
 
-def main():
-    """Função principal"""
-    print("\n" + "="*80)
-    print("LEADEXTRACT ADVANCED 2.0 - Sistema de Extracao e Enriquecimento de Leads")
-    print("="*80 + "\n")
+async def main():
+    parser = argparse.ArgumentParser(description='LeadExtract Advanced - Extração B2B Brasil')
+    parser.add_argument('termo_busca', help='Termo de busca (ex: Energia Solar SP)')
+    parser.add_argument('--limite', type=int, default=50, help='Limite de empresas (default: 50)')
+    parser.add_argument('--output', '-o', default=None, help='Arquivo CSV output (default: leads_[timestamp].csv)')
+    parser.add_argument('--max-concurrent', type=int, default=5, help='Max concurrent crawls (default: 5)')
     
-    print("Menu Principal:")
-    print("1. Extrair leads (Google Maps + Enriquecimento)")
-    print("2. Sair\n")
+    args = parser.parse_args()
     
-    escolha = input("Escolha uma opcao: ").strip()
+    if args.output is None:
+        timestamp = pd.Timestamp.now().strftime('%Y%m%d_%H%M%S')
+        args.output = f"leads_{args.termo_busca.replace(' ', '_')}_{timestamp}.csv"
     
-    if escolha == "1":
-        termo = input("\nTermo de busca (ex: 'Consultoria de Marketing em Sao Paulo'): ").strip()
-        if not termo:
-            termo = "Consultoria de Marketing em Sao Paulo"
-        
-        limite_str = input(f"Numero de leads (padrao 20): ").strip()
-        limite = int(limite_str) if limite_str.isdigit() else 20
-        
-        print(f"\nProcessando: {termo}")
-        print(f"Limite: {limite} leads\n")
-        asyncio.run(executar_pipeline(termo, limite))
+    print(f"🚀 Iniciando extração: '{args.termo_busca}'")
+    print(f"📊 Limite: {args.limite}")
+    print(f"💾 Output: {args.output}")
     
+    pipeline = PipelineLeadExtractor(max_concurrent=args.max_concurrent)
+    df = await pipeline.extrair_e_enriquecer(args.termo_busca, args.limite)
+    
+    if not df.empty:
+        output_path = Path(args.output)
+        df.to_csv(output_path, index=False, encoding='utf-8')
+        print(f"\n✅ SUCESSO! {len(df)} leads salvos em:")
+        print(f"📂 {output_path.absolute()}")
+        print(f"\n📈 Top 5 leads (score):")
+        print(df[['nome_empresa', 'url_site', 'cnpj', 'telefone', 'lead_score']].head())
     else:
-        print("Encerrando...")
-        sys.exit(0)
+        print("❌ Nenhum lead gerado!")
 
-async def executar_pipeline(termo: str, limite: int):
-    """Executa o pipeline de extracao"""
-    
-    pipeline = PipelineLeadExtractor(max_concurrent=3)
-    
-    try:
-        print("[INICIANDO] Pipeline de extracao...")
-        df = await pipeline.extrair_e_enriquecer(
-            termo_busca=termo,
-            limite_empresas=limite
-        )
-        
-        if not df.empty:
-            downloads = Path.home() / "Downloads"
-            csv_path = downloads / "leads_enriquecidos_brutal.csv"
-            
-            df.to_csv(csv_path, index=False, encoding='utf-8-sig')
-            print(f"\n[OK] {len(df)} leads extraidos e salvos!")
-            print(f"[OK] Arquivo: {csv_path}")
-            
-            print(f"\nEstatisticas:")
-            print(f"  Total: {len(df)}")
-            if 'lead_score' in df.columns:
-                print(f"  Score medio: {df['lead_score'].mean():.2f}")
-        else:
-            print("[!] Nenhum lead foi gerado")
-            
-    except Exception as e:
-        print(f"[ERRO] {e}")
+if __name__ == '__main__':
+    asyncio.run(main())
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\n\nOperacao cancelada pelo usuario.")
-        sys.exit(0)
-    except Exception as e:
-        print(f"\nErro fatal: {e}")
-        sys.exit(1)

@@ -205,43 +205,69 @@ class MapStealthScraper:
                 # Delay humano entre scrolls
                 await asyncio.sleep(random.uniform(1, 3))
             
-            # Extrair dados via JavaScript - filtrar apenas "Ver rotas para"  
-            empresas_dados = await page.evaluate(r"""
-                () => {
-                    // Pegar TODOS os buttons com aria-label
-                    const buttons = document.querySelectorAll('button[aria-label]');
-                    
-                    // Filtrar apenas aqueles que começam com "Ver rotas para"
-                    const resultados = [];
-                    buttons.forEach(button => {
-                        const ariaLabel = button.getAttribute('aria-label') || '';
-                        
-                        if (ariaLabel.startsWith('Ver rotas para')) {
-                            // Remover prefixo e extrair nome
-                            let nome = ariaLabel.replace(/^Ver rotas para\s*/, '').trim();
-                            
-                            // Se tiver pipe, pegar só a primeira parte
-                            if (nome.includes('|')) {
-                                nome = nome.split('|')[0].trim();
-                            }
-                            
-                            // Limpar hífens especiais
-                            nome = nome.replace(/\u2013|\u2014|\u2019/g, '-');
-                            
-                            if (nome && nome.length > 3) {
-                                resultados.push({
-                                    nome: nome,
-                                    rating: null,
-                                    endereco: null,
-                                    aria_label: ariaLabel
-                                });
-                            }
-                        }
-                    });
-                    
-                    return resultados.slice(0, 50);
+    # Extrair dados completos via JavaScript - filtrar "Ver rotas para" + endereco/tel
+            empresas_dados = await page.evaluate("""
+        () => {
+            const resultados = [];
+            const panels = document.querySelectorAll('[data-result-index]');
+            
+            panels.forEach((panel, index) => {
+                if (resultados.length >= 50) return;
+                
+                // Nome da empresa
+                const nomeEl = panel.querySelector('.Io6YTe, h3, [role=\"heading\"]');
+                const nome = nomeEl ? nomeEl.textContent.trim() : '';
+                
+                // Endereço
+                const enderecoEl = panel.querySelector('.W4Efsd, .fontBodyMedium');
+                const endereco = enderecoEl ? enderecoEl.textContent.trim() : '';
+                
+                // Telefone
+                const telEl = panel.querySelector('.rogA2c, a[href^=\\"tel:\\" ]');
+                const telefone = telEl ? telEl.textContent.trim() : '';
+                
+                // Rating
+                const ratingEl = panel.querySelector('.MW4etd, .fontDisplayLarge');
+                let rating = null;
+                if (ratingEl) {
+                    const ratingText = ratingEl.textContent.trim();
+                    const match = ratingText.match(/(\\d+[,]\\d+)/);
+                    if (match) rating = parseFloat(match[1].replace(',', '.'));
                 }
-            """)
+                
+                if (nome.length > 3) {
+                    resultados.push({
+                        nome: nome,
+                        endereco: endereco,
+                        telefone: telefone,
+                        rating: rating,
+                        panel_index: index
+                    });
+                }
+            });
+            
+            // Fallback para aria-label buttons
+            if (resultados.length === 0) {
+                const buttons = document.querySelectorAll('button[aria-label]');
+                buttons.forEach(button => {
+                    if (resultados.length >= 50) return;
+                    const ariaLabel = button.getAttribute('aria-label') || '';
+                    if (ariaLabel.startsWith('Ver rotas para')) {
+                        let nome = ariaLabel.replace(/^Ver rotas para\\s*/, '').split('|')[0].trim();
+                        nome = nome.replace(/\\u2013|\\u2014|\\u2019/g, '-');
+                        resultados.push({
+                            nome: nome,
+                            endereco: null,
+                            telefone: null,
+                            rating: null
+                        });
+                    }
+                });
+            }
+            
+            return resultados;
+        }
+    """)
             
             # Processar cada resultado
             for idx, dados in enumerate(empresas_dados):
@@ -303,10 +329,11 @@ class DeepCrawler:
         r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
     )
     
-    # Regex para WhatsApp
+# Regex para WhatsApp
     WHATSAPP_REGEX = re.compile(
-        r'(?:wa\.me|whatsapp\.com|tel:)?[+]?55\s?[0-9]{2}\s?[0-9]{4,5}[0-9]{4}'
+        r'(?:wa\.me/55|whatsapp\.com|tel\\:55)?[+]?55[\\s\\-]?(?:(?:[1-9]{2})\\s?)?(?:9)?[0-9]{4,5}[0-9]{4}'
     )
+
     
     # Regex para telefone brasileiro
     TELEFONE_REGEX = re.compile(
@@ -508,13 +535,37 @@ class ReceitaWSEnricher:
     
     async def buscar_cnpj(self, nome_empresa: str) -> Optional[str]:
         """
-        Busca CNPJ pelo nome da empresa (muito complexo em API pública).
-        Implementação simplificada - em produção, usar API comercial.
+        Busca CNPJ pelo nome scrapeando minhaceita.org
         """
-        # Nota: APIs públicas não oferecem busca por nome direto
-        # Seria necessário scraping do site da Receita ou API paga
-        logger.warning(f"Busca por nome não implementada para: {nome_empresa}")
+        if not self.session:
+            await self.inicializar()
+        
+        nome_limpo = re.sub(r'[^\w\s]', ' ', nome_empresa)[:100].strip()
+        search_url = f"https://www.minhareceita.org.br/consulta-simples-cnpj/?search={nome_limpo.replace(' ', '+')}"
+        
+        try:
+            await asyncio.sleep(self.rate_limit_delay)
+            async with self.session.get(search_url, timeout=aiohttp.ClientTimeout(total=10)) as resp:
+                if resp.status == 200:
+                    html = await resp.text()
+                    soup = BeautifulSoup(html, 'html.parser')
+                    
+                    # Primeira linha da tabela de resultados
+                    row = soup.select_one('table.table-result tbody tr')
+                    if row:
+                        cnpj_cell = row.select_one('td:nth-of-type(1)')
+                        if cnpj_cell:
+                            cnpj_raw = cnpj_cell.text.strip()
+                            cnpj_limpo = re.sub(r'\D', '', cnpj_raw)
+                            if len(cnpj_limpo) == 14:
+                                logger.info(f"CNPJ encontrado para '{nome_empresa[:50]}': {cnpj_limpo}")
+                                return cnpj_limpo
+            logger.warning(f"CNPJ não encontrado para: {nome_empresa[:50]}")
+        except Exception as e:
+            logger.warning(f"Erro scrape CNPJ '{nome_empresa[:50]}': {e}")
+        
         return None
+
     
     async def enriquecer_por_cnpj(
         self,
@@ -725,6 +776,16 @@ class ScoringEngine:
             score += 1.0
             breakdown['redes_ativas'] = 1.0
         
+        # 6. Sócios QSA
+        socios_count = len(dados_financeiros.socios)
+        if socios_count >= 2:
+            score += 1.5
+            breakdown['multiplos_socios'] = 1.5
+        elif socios_count >= 1:
+            score += 0.8
+            breakdown['tem_socio'] = 0.8
+
+        
         # Limitar entre 0 e 10
         score = min(max(score, 0.0), 10.0)
         
@@ -796,11 +857,17 @@ class PipelineLeadExtractor:
             logger.info("FASE 3: Enriquecimento Financeiro (ReceitaWS)")
             await self.receita_enricher.inicializar()
             
-            # Simular busca de CNPJ (em produção, seria obtido do crawl)
-            tasks_receita = [
-                self.receita_enricher.enriquecer_por_cnpj("00000000000000")  # Mock
-                for _ in dados_crawler
-            ]
+            # Buscar CNPJ por nome e enriquecer
+            tasks_cnpj = []
+            for idx, empresa in enumerate(empresas_base):
+                cnpj = await self.receita_enricher.buscar_cnpj(empresa.nome)
+                if cnpj:
+                    tasks_cnpj.append(self.receita_enricher.enriquecer_por_cnpj(cnpj))
+                else:
+                    tasks_cnpj.append(asyncio.create_task(asyncio.sleep(0.1)))  # Placeholder
+            
+            dados_financeiros = await asyncio.gather(*tasks_cnpj, return_exceptions=True)
+
             
             dados_financeiros = await asyncio.gather(*tasks_receita, return_exceptions=True)
             logger.info(f"[OK] Enriquecimento financeiro completado")
