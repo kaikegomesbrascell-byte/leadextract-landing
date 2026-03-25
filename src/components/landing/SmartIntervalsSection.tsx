@@ -155,7 +155,7 @@ const SmartIntervalsSection = () => {
               </div>
               <div>
                 <h4 className="text-lg font-semibold mb-2" style={{ color: "#f0f4ff" }}>
-                  Por que isso vale R$ 297,00?
+                  Por que isso vale R$ 1.000,00?
                 </h4>
                 <p className="text-sm leading-relaxed" style={{ color: "hsl(220 15% 55%)" }}>
                   Ferramentas baratas ou gratuitas extraem dados de forma agressiva, sem proteção.

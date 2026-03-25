@@ -9,7 +9,7 @@ const FAQSection = () => {
   const faqs = [
     {
       question: "O que são Intervalos Humanos Inteligentes e por que são importantes?",
-      answer: "Intervalos Humanos Inteligentes são delays naturais e variações aleatórias entre cada ação do sistema (scroll, clique, leitura de dados). Isso simula o comportamento de uma pessoa real navegando no Google Maps, protegendo você de bloqueios e banimentos. Sem essa proteção, o Google Maps detecta que é um robô e bloqueia seu IP, e seu WhatsApp pode ser banido por spam ao enviar mensagens para leads extraídos de forma agressiva. É por isso que o sistema vale R$ 297,00 - ele protege seu investimento e garante extrações seguras a longo prazo."
+      answer: "Intervalos Humanos Inteligentes são delays naturais e variações aleatórias entre cada ação do sistema (scroll, clique, leitura de dados). Isso simula o comportamento de uma pessoa real navegando no Google Maps, protegendo você de bloqueios e banimentos. Sem essa proteção, o Google Maps detecta que é um robô e bloqueia seu IP, e seu WhatsApp pode ser banido por spam ao enviar mensagens para leads extraídos de forma agressiva. É por isso que o sistema vale R$ 1.000,00 - ele protege seu investimento e garante extrações seguras a longo prazo."
     },
     {
       question: "Como funciona o Lead Extractor?",

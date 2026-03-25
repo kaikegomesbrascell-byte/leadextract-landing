@@ -66,7 +66,7 @@ POST /gateway/pix/receive
 ### Notas
 - ✅ **Status**: Funcionando (testado com sucesso)
 - `identifier` é um ID único para a transação (use timestamp ou UUID)
-- `amount` deve ser em reais (não centavos): `297` = R$ 297,00
+- `amount` deve ser em reais (não centavos): `1000` = R$ 1.000,00
 - O QR Code retorna em `pix.base64`, use: `data:image/png;base64,${pix.base64}`
 - O código PIX copia e cola está em `pix.code`
 - `expiresIn` é em segundos (3600 = 1 hora)
@@ -133,7 +133,7 @@ POST /gateway/checkout
 
 ### Notas
 - ⚠️ **Status**: Não testado (endpoint pode requerer ativação)
-- O campo `price` deve ser em reais: `297` = R$ 297,00
+- O campo `price` deve ser em reais: `1000` = R$ 1.000,00
 - `payment.method` pode ser: `"credit_card"` ou `"debit_card"`
 - `card.number` deve ser apenas números (sem espaços)
 - `card.exp_month` e `card.exp_year` devem ser strings com 2 dígitos

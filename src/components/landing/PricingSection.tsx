@@ -1,17 +1,20 @@
 import { Button } from "@/components/ui/button";
-import { Check, ArrowRight, Shield } from "lucide-react";
+import { Check, ArrowRight, Shield, Sparkles, Zap } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { CheckoutModal } from "@/components/CheckoutModal";
 
 const benefits = [
-  "🛡️ Intervalos Humanos Inteligentes - Protege seu WhatsApp",
-  "Extração ilimitada de leads do Google Maps",
-  "Exportação CSV e Excel automática",
-  "Sistema anti-duplicatas inteligente",
-  "Feedback visual em tempo real",
-  "Atualizações gratuitas vitalícias",
-  "Suporte técnico via email",
+  "🧠 IA avançada de detecção de leads qualificados",
+  "⚡ Extração ultra-rápida (segundos, não minutos)",
+  "🎯 Intervalos humanos inteligentes - Zero bloqueios",
+  "📊 Dados completos: nome, telefone, email, site, endereço",
+  "📁 Exportação multi-formato (CSV, Excel, JSON)",
+  "🔒 Proteção total de dados e privacidade",
+  "🔄 Atualizações vitalícias gratuitas",
+  "🎯 Segmentação inteligente por filtros avançados",
+  "💬 Suporte técnico prioritário",
+  "📈 ROI garantido nas primeiras campanhas",
 ];
 
 const ease = [0.16, 1, 0.3, 1] as const;
@@ -84,7 +87,7 @@ const PricingSection = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, ease, delay: 0.3 }}
               >
-                R$ 297
+                R$ 1.000
               </motion.span>
               <span style={{ color: "hsl(220 15% 55%)" }}>,00</span>
             </div>

@@ -1,53 +1,69 @@
-import { Database, Zap, Shield, FileSpreadsheet, RefreshCw, UserCheck } from "lucide-react";
+import { Database, Zap, Shield, FileSpreadsheet, RefreshCw, UserCheck, Brain, Target, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
 const features = [
   {
-    icon: UserCheck,
-    title: "Intervalos Humanos Inteligentes",
+    icon: Brain,
+    title: "IA Avançada de Detecção",
     description:
-      "Sistema simula comportamento humano com delays naturais entre ações, protegendo seu número de WhatsApp e evitando bloqueios do Google Maps.",
+      "Sistema inteligente identifica e extrai apenas contatos qualificados, eliminando dados irrelevantes automaticamente.",
     highlight: true,
+    iconColor: "#00d4ff",
+    iconBg: "rgba(0,212,255,0.12)",
+  },
+  {
+    icon: Clock,
+    title: "Extração Ultra Rápida",
+    description:
+      "Processa milhares de resultados em segundos com algoritmos otimizados e processamento paralelo.",
     iconColor: "#10b981",
     iconBg: "rgba(16,185,129,0.12)",
   },
   {
-    icon: Zap,
-    title: "Extração em Tempo Real",
+    icon: UserCheck,
+    title: "Intervalos Humanos Inteligentes",
     description:
-      "Veja os leads aparecendo na tela conforme são extraídos, com feedback visual instantâneo do progresso.",
+      "Simula comportamento natural com delays variáveis, protegendo seu WhatsApp e evitando detecções.",
     iconColor: "#00d4ff",
     iconBg: "rgba(0,212,255,0.10)",
   },
   {
     icon: Database,
-    title: "Dados Completos",
+    title: "Dados Completos e Estruturados",
     description:
-      "Nome, telefone, site, endereço, nota e comentários — todos os campos que você precisa para prospecção.",
-    iconColor: "#00d4ff",
-    iconBg: "rgba(0,212,255,0.10)",
-  },
-  {
-    icon: FileSpreadsheet,
-    title: "Exportação CSV/Excel",
-    description:
-      "Arquivo pronto para importar no seu CRM, planilha ou ferramenta de automação de WhatsApp.",
+      "Nome, telefone, email, site, endereço, avaliação e comentários — tudo organizado para seu CRM.",
     iconColor: "#10b981",
     iconBg: "rgba(16,185,129,0.12)",
   },
   {
-    icon: Shield,
-    title: "Sem Duplicatas",
+    icon: FileSpreadsheet,
+    title: "Exportação Multi-Formato",
     description:
-      "Sistema inteligente remove automaticamente leads duplicados, garantindo lista limpa e única.",
+      "CSV, Excel, JSON — escolha o formato ideal para integrar com suas ferramentas de automação.",
     iconColor: "#00d4ff",
     iconBg: "rgba(0,212,255,0.10)",
   },
   {
-    icon: RefreshCw,
-    title: "Atualizações Incluídas",
+    icon: Shield,
+    title: "Proteção Total de Dados",
     description:
-      "Receba todas as atualizações futuras da ferramenta sem custo adicional. Pagamento único, acesso vitalício.",
+      "Criptografia end-to-end e processamento local. Seus dados nunca saem do seu dispositivo.",
+    iconColor: "#10b981",
+    iconBg: "rgba(16,185,129,0.12)",
+  },
+  {
+    icon: RefreshCw,
+    title: "Atualizações Vitalícias",
+    description:
+      "Receba todas as melhorias e novos recursos gratuitamente. Investimento único, benefícios eternos.",
+    iconColor: "#00d4ff",
+    iconBg: "rgba(0,212,255,0.10)",
+  },
+  {
+    icon: Target,
+    title: "Segmentação Inteligente",
+    description:
+      "Filtre leads por localização, avaliação, categoria e muito mais para campanhas ultra-direcionadas.",
     iconColor: "#10b981",
     iconBg: "rgba(16,185,129,0.12)",
   },
@@ -88,7 +104,7 @@ const FeaturesSection = () => {
           </h2>
         </motion.div>
 
-        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {features.map((feature, i) => (
             <motion.div
               key={feature.title}

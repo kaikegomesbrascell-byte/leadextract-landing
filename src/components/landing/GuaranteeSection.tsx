@@ -152,7 +152,7 @@ const GuaranteeSection = () => {
                   <ArrowRight className="h-5 w-5" />
                 </button>
                 <p className="text-sm" style={{ color: "hsl(220 15% 50%)" }}>
-                  💳 Pagamento único de R$ 297,00 • Garantia de 7 dias • Acesso vitalício
+                  💳 Pagamento único de R$ 1.000,00 • Garantia de 7 dias • Acesso vitalício
                 </p>
               </motion.div>
 

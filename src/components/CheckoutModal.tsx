@@ -105,7 +105,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         // Formato correto da API SigiloPay
         const requestBody = {
           identifier: `lead-extractor-${Date.now()}`,
-          amount: 297,
+          amount: 1000,
           client: {
             name: formData.name,
             email: formData.email,
@@ -178,7 +178,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         body: JSON.stringify({
           product: {
             name: "Lead Extractor - Licença Completa",
-            price: 297,
+            price: 1000,
           },
           customer: {
             name: formData.name,
@@ -341,7 +341,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
 
             <div className="rounded-lg bg-muted p-4 text-center">
               <p className="text-sm font-semibold mb-1">Valor Total</p>
-              <p className="text-2xl font-bold text-accent">R$ 297,00</p>
+              <p className="text-2xl font-bold text-accent">R$ 1.000,00</p>
             </div>
 
             <Button
@@ -390,7 +390,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
                   <li>Abra o app do seu banco</li>
                   <li>Escolha pagar com PIX</li>
                   <li>Escaneie o QR Code ou cole o código</li>
-                  <li>Confirme o pagamento de R$ 297,00</li>
+                  <li>Confirme o pagamento de R$ 1.000,00</li>
                 </ol>
               </div>
 
@@ -462,7 +462,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             <div className="rounded-lg bg-muted p-4">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">Valor Total</span>
-                <span className="text-xl font-bold text-accent">R$ 297,00</span>
+                <span className="text-xl font-bold text-accent">R$ 1.000,00</span>
               </div>
             </div>
 

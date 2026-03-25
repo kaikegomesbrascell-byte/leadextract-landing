@@ -8,7 +8,7 @@ Update all "297" pricing references to "1000" (R$ 1.000,00)
 
 ### Phase 1: Create TODO & Initial Edits [P0]
 - [x] 1.1 Create TODO.md with full plan breakdown
-- [ ] 1.2 Edit deploy_conversion_event.py (R$ 297,00 → R$ 1.000,00 x4)
+- [x] 1.2 Edit deploy_conversion_event.py (R$ 297,00 → R$ 1.000,00 x4)
 
 ### Phase 2: Core Pricing Files [P0]
 - [ ] 2.1 Edit MODULOS_INTELLIGENCE_README.md (pricing upgrade texts)

@@ -202,7 +202,7 @@ Entenda maturidade digital do seu segmento
 
 ## 💰 Modelo de Negócio
 
-- **Plano Básico**: R$ 297/mês (extração básica)
+- **Plano Básico**: R$ 1.000/mês (extração básica)
 - **Plano Premium**: R$ 1.000/mês (com módulos de inteligência)
 
 ## 📈 Resultados Esperados
