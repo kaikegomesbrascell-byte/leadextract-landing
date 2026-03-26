@@ -227,57 +227,56 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             signal: AbortSignal.timeout(5000), // Timeout de 5 segundos
           });
 
-          if (response.ok) {
-            const data = await response.json();
-            console.log("Resposta PIX completa:", JSON.stringify(data, null, 2));
-            
-            // A API da SigiloPay retorna os dados dentro do objeto "pix"
-            const pixInfo = data.pix || data;
-            const payload = pixInfo.pix || pixInfo;
+          if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`SigiloPay retornou status ${response.status}: ${errorText}`);
+          }
 
-            // Tentar diferentes campos para o QR Code e para o código PIX
-            qrCodeImage =
-              payload.base64 ||
-              payload.qrCode ||
-              payload.qrcode ||
-              payload.qr_code ||
-              payload.image ||
-              payload.qrCodeBase64 ||
-              payload.qrCodeImage ||
-              pixInfo.base64 ||
-              pixInfo.qrCode ||
-              pixInfo.qrcode ||
-              pixInfo.qr_code ||
-              pixInfo.image ||
-              "";
+          const data = await response.json();
+          console.log("Resposta PIX completa:", JSON.stringify(data, null, 2));
 
-            pixCode =
-              payload.code ||
-              payload.pixCopyPaste ||
-              payload.brCode ||
-              payload.emv ||
-              payload.pix_copy_paste ||
-              payload.payload ||
-              pixInfo.code ||
-              pixInfo.pixCopyPaste ||
-              pixInfo.brCode ||
-              pixInfo.emv ||
-              pixInfo.pix_copy_paste ||
-              pixInfo.payload ||
-              "";
-          } else {
-            throw new Error("API retornou erro");
+          const pixInfo = data.pix || data;
+          const payload = pixInfo.pix || pixInfo;
+
+          qrCodeImage =
+            payload.base64 ||
+            payload.qrCode ||
+            payload.qrcode ||
+            payload.qr_code ||
+            payload.image ||
+            payload.qrCodeBase64 ||
+            payload.qrCodeImage ||
+            pixInfo.base64 ||
+            pixInfo.qrCode ||
+            pixInfo.qrcode ||
+            pixInfo.qr_code ||
+            pixInfo.image ||
+            "";
+
+          pixCode =
+            payload.code ||
+            payload.pixCopyPaste ||
+            payload.brCode ||
+            payload.emv ||
+            payload.pix_copy_paste ||
+            payload.payload ||
+            pixInfo.code ||
+            pixInfo.pixCopyPaste ||
+            pixInfo.brCode ||
+            pixInfo.emv ||
+            pixInfo.pix_copy_paste ||
+            pixInfo.payload ||
+            "";
+
+          if (!qrCodeImage || !pixCode) {
+            throw new Error(`SigiloPay retornou payload incompleto: qrCode=${Boolean(qrCodeImage)}, pixCode=${Boolean(pixCode)}`);
           }
         } catch (apiError) {
-          // Fallback quando o servidor não responde
-          console.warn("Servidor de pagamento indisponível, usando modo demo:", apiError);
-          usesFallback = true;
-          
-          // QR Code demo (PIX genérico para teste)
-          qrCodeImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iI2ZmZiIvPjxyZWN0IHg9IjUwIiB5PSI1MCIgd2lkdGg9IjEwMCIgaGVpZ2h0PSIxMDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzAwMCIgc3Ryb2tlLXdpZHRoPSIyIi8+PHRleHQgeD0iMTAwIiB5PSIxMTAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTIiIGZpbGw9IiMwMDAiPkRFTU88L3RleHQ+PHRleHQgeD0iMTAwIiB5PSIxNjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtc2l6ZT0iMTAiIGZvbnQtd2VpZ2h0PSJib2xkIiBmaWxsPSIjZjAwIj5MYWJvcmF0w7NyaW88L3RleHQ+PC9zdmc+";
-          
-          // Chave PIX demo (CPF do cliente com sufixo)
-          pixCode = `00020126580014br.gov.bcb.pix0136${cleanCpf}@demo.pix52040000530398654615230200007BR1D082024`;
+          console.error("Erro no checkout PIX (SigiloPay):", apiError);
+          setCardErrorMessage(`Erro de pagamento: ${apiError?.message || "Sem detalhes"}`);
+          setLoading(false);
+          setStep(2);
+          return;
         }
 
         if (!qrCodeImage || !pixCode) {
