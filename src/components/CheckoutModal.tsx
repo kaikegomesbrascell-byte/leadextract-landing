@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +11,13 @@ interface CheckoutModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+type CheckoutFormData = {
+  name: string;
+  email: string;
+  cpf: string;
+  phone: string;
+};
+
 export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
@@ -18,12 +25,90 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const [paymentMethod, setPaymentMethod] = useState<"pix">("pix");
   const [pixData, setPixData] = useState<{ qrCode: string; pixCode: string } | null>(null);
   const [cardErrorMessage, setCardErrorMessage] = useState("");
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<CheckoutFormData>({
     name: "",
     email: "",
     cpf: "",
     phone: "",
   });
+
+  const STORAGE_KEY = "leadextract_checkout_pix";
+
+  const normalizeQrCode = (code: string) => {
+    if (!code) return "";
+    const imageUriMatch = code.match(/^data:image\/[a-zA-Z+-.]+;base64,(.+)$/);
+    if (imageUriMatch) {
+      return `data:image/png;base64,${imageUriMatch[1]}`;
+    }
+    return code.startsWith("data:image") ? code : `data:image/png;base64,${code}`;
+  };
+
+  const persistState = (
+    nextStep: 1 | 2 | 3,
+    nextPixData: { qrCode: string; pixCode: string } | null,
+    nextFormData: CheckoutFormData,
+    nextMethod: "pix"
+  ) => {
+    if (typeof window === "undefined") return;
+    try {
+      const payload = {
+        step: nextStep,
+        paymentMethod: nextMethod,
+        formData: nextFormData,
+        pixData: nextPixData,
+      };
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+    } catch (error) {
+      console.warn("Erro ao persistir estado de checkout:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+
+      if (parsed?.pixData?.pixCode && parsed?.pixData?.qrCode) {
+        setPixData(parsed.pixData);
+        setStep(parsed.step || 3);
+        setPaymentMethod(parsed.paymentMethod || "pix");
+        if (parsed.formData) setFormData(parsed.formData);
+
+        if (!open) {
+          onOpenChange(true);
+        }
+      }
+    } catch (error) {
+      console.warn("Erro ao ler estado de checkout do localStorage:", error);
+    }
+  }, [onOpenChange, open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (pixData) {
+      setStep(3);
+      return;
+    }
+
+    if (typeof window === "undefined") return;
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (!saved) return;
+      const parsed = JSON.parse(saved);
+
+      if (parsed?.pixData?.pixCode && parsed?.pixData?.qrCode) {
+        setPixData(parsed.pixData);
+        setStep(parsed.step || 3);
+        setPaymentMethod(parsed.paymentMethod || "pix");
+        if (parsed.formData) setFormData(parsed.formData);
+      }
+    } catch (error) {
+      console.warn("Erro ao restaurar estado de checkout ao abrir:", error);
+    }
+  }, [open, pixData]);
 
   const formatCPF = (value: string) => {
     const numbers = value.replace(/\D/g, "");
@@ -73,6 +158,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStep(2); // Ir para seleção de método de pagamento
+    persistState(2, pixData, formData, paymentMethod);
   };
 
   const handleCardUnavailable = () => {
@@ -199,11 +285,16 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         console.log("PIX Code:", pixCode ? "OBTIDO" : "NÃO DISPONÍVEL");
         console.log("Usando fallback:", usesFallback);
 
-        setPixData({
-          qrCode: qrCodeImage || "",
-          pixCode: pixCode || "00020126580014br.gov.bcb.pix0136" + cleanCpf + "@demo.pix52040000530398654615230200007BR1D082024",
-        });
-        
+        const finalPixCode = pixCode || `00020126580014br.gov.bcb.pix0136${cleanCpf}@demo.pix52040000530398654615230200007BR1D082024`;
+        const finalQrCode = normalizeQrCode(qrCodeImage || "");
+
+        const newPixData = {
+          qrCode: finalQrCode,
+          pixCode: finalPixCode,
+        };
+
+        setPixData(newPixData);
+        persistState(3, newPixData, formData, "pix");
         setStep(3);
       } catch (error) {
         console.error("Erro no checkout PIX:", error);
@@ -223,6 +314,11 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
     setCardErrorMessage("");
     setPaymentMethod("pix");
     setFormData({ name: "", email: "", cpf: "", phone: "" });
+
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
     onOpenChange(false);
   };
 
@@ -357,7 +453,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
             {pixData?.qrCode && (
               <div className="flex justify-center">
                 <img
-                  src={`data:image/png;base64,${pixData.qrCode}`}
+                  src={pixData.qrCode}
                   alt="QR Code PIX"
                   className="w-64 h-64 border-2 border-accent rounded-lg p-2 bg-white"
                 />
