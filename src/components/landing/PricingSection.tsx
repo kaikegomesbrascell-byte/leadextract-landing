@@ -50,248 +50,309 @@ const PricingSection = () => {
             className="mt-3 text-balance text-3xl font-bold tracking-tight sm:text-4xl"
             style={{ color: "#f0f4ff" }}
           >
-            Pagamento único. Acesso vitalício.
+            Escolha o plano ideal para você
           </h2>
           <p className="mt-4" style={{ color: "hsl(220 15% 55%)" }}>
-            Sem assinaturas, sem taxas mensais. Pague uma vez e tenha acesso completo ao extrator.
+            Planos mensais flexíveis. Cancele quando quiser.
           </p>
         </motion.div>
 
-        {/* MERCHAN COM DESCONTO IMPRESSIONANTE */}
-        <motion.div
-          className="mt-10 rounded-2xl p-6 relative overflow-hidden"
-          style={{
-            background: "linear-gradient(135deg, rgba(255,0,127,0.15) 0%, rgba(0,212,255,0.15) 100%)",
-            border: "2px solid rgba(255,0,127,0.5)",
-            boxShadow: "0 0 80px rgba(255,0,127,0.3), inset 0 0 60px rgba(0,212,255,0.1)",
-          }}
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.3 }}
-          transition={{ duration: 0.6, ease, delay: 0.1 }}
-        >
-          {/* Efeito de spotlight */}
-          <div
-            className="absolute top-0 right-0 w-96 h-96 blur-3xl opacity-20 pointer-events-none"
+        {/* DOIS PLANOS LADO A LADO */}
+        <div className="mt-12 grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+          {/* PLANO START - R$ 97/mês */}
+          <motion.div
+            className="rounded-2xl p-8 relative overflow-hidden"
             style={{
-              background: "radial-gradient(circle, rgba(255,0,127,0.8) 0%, transparent 70%)",
+              background: "rgba(255,255,255,0.03)",
+              border: "2px solid rgba(0,212,255,0.5)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              boxShadow: "0 0 60px rgba(0,212,255,0.2), 0 40px 80px rgba(0,0,0,0.4)",
             }}
-          />
-          
-          <div className="relative z-10">
-            {/* Badge de urgência */}
-            <div className="flex justify-center mb-4">
-              <motion.div
-                className="inline-block rounded-full px-4 py-1.5"
+            initial={{ opacity: 0, y: 30, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease, delay: 0.1 }}
+          >
+            {/* Badge de destaque */}
+            <div className="absolute top-4 right-4">
+              <div
+                className="rounded-full px-3 py-1"
                 style={{
-                  background: "linear-gradient(135deg, #ff007f, #ff4db8)",
-                  boxShadow: "0 0 20px rgba(255,0,127,0.6)",
+                  background: "linear-gradient(135deg, #00d4ff, #0099cc)",
+                  boxShadow: "0 0 20px rgba(0,212,255,0.5)",
                 }}
-                animate={{
-                  boxShadow: [
-                    "0 0 20px rgba(255,0,127,0.4)",
-                    "0 0 40px rgba(255,0,127,0.8)",
-                    "0 0 20px rgba(255,0,127,0.4)",
-                  ],
-                }}
-                transition={{ duration: 2, repeat: Infinity }}
               >
-                <p className="text-xs font-bold uppercase tracking-widest text-white">
-                  🎯 OFERTA 87% OFF - MERCHAN DO DIA
-                </p>
-              </motion.div>
+                <p className="text-xs font-bold uppercase text-black">Popular</p>
+              </div>
             </div>
 
-            {/* Comparação de preços */}
-            <div className="flex items-center justify-center gap-6">
-              {/* Preço original */}
-              <motion.div
-                className="text-center"
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease, delay: 0.2 }}
+            <div className="mb-6">
+              <span
+                className="font-mono-data text-xs font-semibold uppercase tracking-widest"
+                style={{ color: "#00d4ff" }}
               >
-                <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: "hsl(220 15% 55%)" }}>
-                  Valor Original
-                </p>
-                <p
-                  className="text-3xl font-extrabold mt-2 line-through decoration-2"
-                  style={{ color: "rgba(255,0,127,0.8)" }}
+                Plano Start
+              </span>
+              <div className="mt-3 flex items-baseline gap-1">
+                <motion.span
+                  className="text-5xl font-extrabold tracking-tight"
+                  style={{ color: "#f0f4ff" }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: 0.3 }}
                 >
-                  R$ 7.983
-                </p>
-              </motion.div>
-
-              {/* Seta/Redução */}
-              <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity }}
-              >
-                <div
-                  className="text-3xl font-bold px-4 py-2 rounded-lg"
-                  style={{
-                    background: "linear-gradient(135deg, #ff007f, #ff4db8)",
-                    color: "white",
-                  }}
-                >
-                  ➜
-                </div>
-              </motion.div>
-
-              {/* Preço com desconto */}
-              <motion.div
-                className="text-center"
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease, delay: 0.3 }}
-              >
-                <p className="text-sm font-semibold uppercase tracking-wider" style={{ color: "#00d4ff" }}>
-                  Agora por
-                </p>
-                <p
-                  className="text-4xl font-extrabold mt-2"
-                  style={{
-                    background: "linear-gradient(135deg, #00d4ff, #0099cc)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                  }}
-                >
-                  R$ 1.000
-                </p>
-              </motion.div>
-            </div>
-
-            {/* Economia */}
-            <motion.div
-              className="mt-6 text-center p-4 rounded-lg"
-              style={{
-                background: "rgba(0,212,255,0.1)",
-                border: "1px solid rgba(0,212,255,0.3)",
-              }}
-              initial={{ opacity: 0, y: 10 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, ease, delay: 0.4 }}
-            >
-              <p className="text-2xl font-extrabold" style={{ color: "#10b981" }}>
-                💰 Você economiza R$ 6.983
-              </p>
-              <p className="text-sm mt-2" style={{ color: "hsl(220 15% 55%)" }}>
-                Essa promoção é por tempo limitado. Aproveite enquanto dura!
-              </p>
-            </motion.div>
-          </div>
-        </motion.div>
-
-        <motion.div
-          className="mt-12 rounded-2xl p-8"
-          style={{
-            background: "rgba(255,255,255,0.03)",
-            border: "1px solid rgba(0,212,255,0.25)",
-            backdropFilter: "blur(20px)",
-            WebkitBackdropFilter: "blur(20px)",
-            boxShadow: "0 0 60px rgba(0,212,255,0.08), 0 40px 80px rgba(0,0,0,0.4)",
-          }}
-          initial={{ opacity: 0, y: 30, scale: 0.97 }}
-          whileInView={{ opacity: 1, y: 0, scale: 1 }}
-          viewport={{ once: true, amount: 0.2 }}
-          transition={{ duration: 0.8, ease, delay: 0.15 }}
-        >
-          <div className="mb-6">
-            <span
-              className="font-mono-data text-xs font-semibold uppercase tracking-widest"
-              style={{ color: "#00d4ff" }}
-            >
-              Licença Completa
-            </span>
-            <div className="mt-3 flex items-baseline justify-center gap-1">
-              <motion.span
-                className="text-5xl font-extrabold tracking-tight"
-                style={{ color: "#f0f4ff" }}
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, ease, delay: 0.3 }}
-              >
-                R$ 1.000
-              </motion.span>
-              <span style={{ color: "hsl(220 15% 55%)" }}>,00</span>
-            </div>
-            <div
-              className="mt-3 inline-block rounded-lg px-6 py-2"
-              style={{ background: "linear-gradient(135deg,#0099cc,#00d4ff)" }}
-            >
-              <p className="text-xl font-bold uppercase tracking-wide text-black">
-                💳 PAGAMENTO ÚNICO
+                  R$ 97
+                </motion.span>
+                <span style={{ color: "hsl(220 15% 55%)" }}>/mês</span>
+              </div>
+              <p className="mt-2 text-sm" style={{ color: "hsl(220 15% 55%)" }}>
+                Ideal para começar. Cancele quando quiser.
               </p>
             </div>
-            <p className="mt-2 text-sm" style={{ color: "hsl(220 15% 55%)" }}>
-              Sem mensalidades. Sem taxas recorrentes. Acesso vitalício.
-            </p>
-          </div>
 
-          <ul className="mb-8 space-y-3 text-left">
-            {benefits.map((benefit, i) => (
+            <ul className="mb-8 space-y-3 text-left">
               <motion.li
-                key={benefit}
                 className="flex items-center gap-3 text-sm"
                 style={{ color: "#f0f4ff" }}
                 initial={{ opacity: 0, x: -12 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.4, ease, delay: 0.35 + i * 0.06 }}
+                transition={{ duration: 0.4, ease, delay: 0.35 }}
               >
                 <Check className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
-                {benefit}
+                50 Empresas Qualificadas/mês
               </motion.li>
-            ))}
-          </ul>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.4 }}
+              >
+                <Check className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
+                Nome do Dono e Capital Social
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.45 }}
+              >
+                <Check className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
+                Detecção Básica de Pixel/Ads
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.5 }}
+              >
+                <Check className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
+                Exportação CSV/Excel
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.55 }}
+              >
+                <Check className="h-4 w-4 shrink-0" style={{ color: "#10b981" }} />
+                Suporte por email
+              </motion.li>
+            </ul>
 
-          <button
-            className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold transition-all duration-200"
-            style={{
-              background: "linear-gradient(135deg,#0099cc,#00d4ff)",
-              color: "#000",
-              boxShadow: "0 0 30px rgba(0,212,255,0.3)",
-              border: "none",
-              cursor: "pointer",
-            }}
-            onClick={() => setCheckoutOpen(true)}
-            onMouseEnter={e => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                "0 0 50px rgba(0,212,255,0.5)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
-            }}
-            onMouseLeave={e => {
-              (e.currentTarget as HTMLButtonElement).style.boxShadow =
-                "0 0 30px rgba(0,212,255,0.3)";
-              (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
-            }}
-          >
-            Comprar Agora
-            <ArrowRight className="h-5 w-5" />
-          </button>
+            <button
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold transition-all duration-200"
+              style={{
+                background: "linear-gradient(135deg,#0099cc,#00d4ff)",
+                color: "#000",
+                boxShadow: "0 0 30px rgba(0,212,255,0.3)",
+                border: "none",
+                cursor: "pointer",
+              }}
+              onClick={() => setCheckoutOpen(true)}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "0 0 50px rgba(0,212,255,0.5)";
+                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLButtonElement).style.boxShadow =
+                  "0 0 30px rgba(0,212,255,0.3)";
+                (e.currentTarget as HTMLButtonElement).style.transform = "translateY(0)";
+              }}
+            >
+              Quero Liberar Meus 50 Leads Agora
+              <ArrowRight className="h-5 w-5" />
+            </button>
 
-          <div
-            className="mt-4 rounded-xl p-4 flex items-center justify-center gap-2"
-            style={{
-              background: "rgba(16,185,129,0.08)",
-              border: "1px solid rgba(16,185,129,0.2)",
-            }}
-          >
-            <Shield className="h-4 w-4" style={{ color: "#10b981" }} />
-            <p className="text-sm font-semibold" style={{ color: "#10b981" }}>
-              Garantia de 7 dias ou seu dinheiro de volta
+            <p className="mt-3 text-xs text-center" style={{ color: "hsl(220 15% 45%)" }}>
+              Pagamento seguro via PIX
             </p>
-          </div>
+          </motion.div>
 
-          <p className="mt-3 text-xs" style={{ color: "hsl(220 15% 45%)" }}>
-            Pagamento seguro via PIX
-          </p>
-        </motion.div>
+          {/* PLANO SOVEREIGN - R$ 1000/mês */}
+          <motion.div
+            className="rounded-2xl p-8 relative overflow-hidden"
+            style={{
+              background: "linear-gradient(135deg, rgba(139,92,246,0.1) 0%, rgba(59,130,246,0.1) 100%)",
+              border: "2px solid rgba(139,92,246,0.5)",
+              backdropFilter: "blur(20px)",
+              WebkitBackdropFilter: "blur(20px)",
+              boxShadow: "0 0 60px rgba(139,92,246,0.3), 0 40px 80px rgba(0,0,0,0.4)",
+            }}
+            initial={{ opacity: 0, y: 30, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.2 }}
+            transition={{ duration: 0.8, ease, delay: 0.2 }}
+          >
+            {/* Badge VIP */}
+            <div className="absolute top-4 right-4">
+              <div
+                className="rounded-full px-3 py-1"
+                style={{
+                  background: "linear-gradient(135deg, #8b5cf6, #3b82f6)",
+                  boxShadow: "0 0 20px rgba(139,92,246,0.5)",
+                }}
+              >
+                <p className="text-xs font-bold uppercase text-white">VIP</p>
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <span
+                className="font-mono-data text-xs font-semibold uppercase tracking-widest"
+                style={{ color: "#8b5cf6" }}
+              >
+                Licença Sovereign 6.0
+              </span>
+              <div className="mt-3 flex items-baseline gap-1">
+                <motion.span
+                  className="text-5xl font-extrabold tracking-tight"
+                  style={{ color: "#f0f4ff" }}
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, ease, delay: 0.3 }}
+                >
+                  R$ 1.000
+                </motion.span>
+                <span style={{ color: "hsl(220 15% 55%)" }}>/mês</span>
+              </div>
+              <p className="mt-2 text-sm font-semibold" style={{ color: "#8b5cf6" }}>
+                Exclusivo por Região
+              </p>
+            </div>
+
+            <ul className="mb-8 space-y-3 text-left">
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.35 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#8b5cf6" }} />
+                Extração Ilimitada
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.4 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#8b5cf6" }} />
+                WhatsApp Direto dos Decisores
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.45 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#8b5cf6" }} />
+                Auditoria Completa de Marketing
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.5 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#8b5cf6" }} />
+                Garantia de Exclusividade Regional
+              </motion.li>
+              <motion.li
+                className="flex items-center gap-3 text-sm"
+                style={{ color: "#f0f4ff" }}
+                initial={{ opacity: 0, x: -12 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.4, ease, delay: 0.55 }}
+              >
+                <Sparkles className="h-4 w-4 shrink-0" style={{ color: "#8b5cf6" }} />
+                Suporte Prioritário VIP
+              </motion.li>
+            </ul>
+
+            <a
+              href="https://wa.me/5516994260416?text=Olá!%20Tenho%20interesse%20na%20Licença%20Sovereign%20do%20LeadExtract.%20Quero%20verificar%20se%20a%20minha%20região%20ainda%20está%20disponível%20para%20exclusividade."
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold transition-all duration-200"
+              style={{
+                background: "linear-gradient(135deg, #8b5cf6, #3b82f6)",
+                color: "#fff",
+                boxShadow: "0 0 30px rgba(139,92,246,0.3)",
+                border: "none",
+                cursor: "pointer",
+                textDecoration: "none",
+              }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+                  "0 0 50px rgba(139,92,246,0.5)";
+                (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLAnchorElement).style.boxShadow =
+                  "0 0 30px rgba(139,92,246,0.3)";
+                (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)";
+              }}
+            >
+              Falar com Especialista no VIP
+              <Zap className="h-5 w-5" />
+            </a>
+
+            <div
+              className="mt-4 rounded-xl p-3 flex items-center justify-center gap-2"
+              style={{
+                background: "rgba(139,92,246,0.1)",
+                border: "1px solid rgba(139,92,246,0.3)",
+              }}
+            >
+              <Shield className="h-4 w-4" style={{ color: "#8b5cf6" }} />
+              <p className="text-xs font-semibold" style={{ color: "#8b5cf6" }}>
+                Vagas limitadas por região
+              </p>
+            </div>
+          </motion.div>
+        </div>
       </div>
     </section>
   );
