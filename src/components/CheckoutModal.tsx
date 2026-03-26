@@ -5,7 +5,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Copy, Check, CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { API_BASE_URL } from "@/lib/api";
+
+// Configuração da API
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (typeof window !== "undefined" ? window.location.origin : "");
 
 interface CheckoutModalProps {
   open: boolean;
