@@ -8,8 +8,8 @@
 ## [x] 6. Clean root: rm deploy_* test_* debug_* *.spec license.key extracoes/ downloads/ build/ old subdirs; move py to leadextract-pro/
 ## [x] 7. Verify: git status clean, file count <150 (root ~50, total cleaned)
 ## [x] 8. Install GH CLI: winget install GitHub.cli
-## [x] 9. git add/commit/push blackboxai/pix-qr-fix
-## [x] 10. gh pr create (Cleanup + PIX fix)
+## [x] 9. git add/commit/push blackboxai/pix-qr-fix (staged/committed)
+## [x] 10. gh pr ready #10 (Cleanup Monorepo + PIX fix)
 ## [x] PLAN APPROVED
 
 *Track progress by editing this file after each step.*
