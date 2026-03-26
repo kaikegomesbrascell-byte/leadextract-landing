@@ -36,11 +36,19 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
 
   const normalizeQrCode = (code: string) => {
     if (!code) return "";
-    const imageUriMatch = code.match(/^data:image\/[a-zA-Z+-.]+;base64,(.+)$/);
-    if (imageUriMatch) {
-      return `data:image/png;base64,${imageUriMatch[1]}`;
+
+    // Já vem como data URI (PNG, SVG etc) -> mantem
+    if (/^data:image\/[a-zA-Z+-.]+;base64,/.test(code)) {
+      return code;
     }
-    return code.startsWith("data:image") ? code : `data:image/png;base64,${code}`;
+
+    // Se tiver apenas base64 puro
+    if (/^[A-Za-z0-9+/=]+$/.test(code)) {
+      return `data:image/png;base64,${code}`;
+    }
+
+    // fallback guard: string qualquer
+    return `data:image/png;base64,${code}`;
   };
 
   const persistState = (
