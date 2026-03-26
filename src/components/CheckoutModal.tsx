@@ -7,14 +7,8 @@ import { Loader2, Copy, Check, CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // Configuração da API
-const getApiBaseUrl = () => {
-  // Em produção na Vercel, usa o mesmo domínio
-  if (typeof window !== "undefined" && window.location.hostname !== "localhost") {
-    return window.location.origin;
-  }
-  // Em desenvolvimento local, usa variável de ambiente ou localhost:3001
-  return import.meta.env.VITE_API_BASE_URL || "http://localhost:3001";
-};
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
+  (typeof window !== "undefined" ? window.location.origin : "");
 
 interface CheckoutModalProps {
   open: boolean;
@@ -228,10 +222,7 @@ export const CheckoutModal = ({ open, onOpenChange }: CheckoutModalProps) => {
         let usesFallback = false;
 
         try {
-          const apiUrl = getApiBaseUrl();
-          console.log("API Base URL:", apiUrl);
-          
-          const response = await fetch(`${apiUrl}/api/payment-pix`, {
+          const response = await fetch(`${API_BASE_URL}/api/payment-pix`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",

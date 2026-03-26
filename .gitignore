@@ -100,17 +100,3 @@ CORRECAO_*.md
 ATUALIZACAO_*.md
 GUIA_SERVIDOR_BACKEND.md
 RESUMO_MUDANCAS_FINAIS.md
-
-# Sensitive
-*.key
-license.key
-
-# Data dirs
-/extracoes/
-/downloads/
-/build/
-
-# OS/IDE extra
-.DS_Store
-Thumbs.db
-desktop.ini

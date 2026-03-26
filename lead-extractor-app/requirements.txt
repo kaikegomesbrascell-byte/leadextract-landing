@@ -1,0 +1,44 @@
+# Google Maps Lead Extractor - Dependências
+# Python 3.9+
+# 
+# Para instalar todas as dependências:
+#   pip install -r requirements.txt
+#
+# Após instalar playwright, execute:
+#   playwright install chromium
+
+# ============================================================
+# AUTOMAÇÃO DE NAVEGADOR
+# ============================================================
+playwright==1.58.0
+
+# ============================================================
+# INTERFACE GRÁFICA MODERNA
+# ============================================================
+customtkinter==5.2.2
+
+# ============================================================
+# MANIPULAÇÃO E EXPORTAÇÃO DE DADOS
+# ============================================================
+pandas==3.0.1
+openpyxl==3.1.5
+
+# ============================================================
+# MONITORAMENTO DE SISTEMA
+# ============================================================
+psutil==5.9.6
+
+# ============================================================
+# BIBLIOTECAS PADRÃO DO PYTHON (não precisam ser instaladas)
+# ============================================================
+# asyncio - Programação assíncrona (Python 3.4+)
+# threading - Execução paralela (Python stdlib)
+# tkinter - Base do CustomTkinter (incluído no Python)
+# typing - Type hints (Python 3.5+)
+# dataclasses - Data classes (Python 3.7+)
+# datetime - Manipulação de datas (Python stdlib)
+# json - Manipulação de JSON (Python stdlib)
+# logging - Sistema de logs (Python stdlib)
+# random - Geração de números aleatórios (Python stdlib)
+# os - Operações do sistema operacional (Python stdlib)
+# sys - Parâmetros e funções do sistema (Python stdlib)

@@ -1,0 +1,76 @@
+========================================
+INSTRUÇÕES RÁPIDAS - Lead Extractor
+========================================
+
+✅ PROBLEMA DE LICENÇA: RESOLVIDO!
+✅ EXECUTÁVEL RECOMPILADO: dist/LeadExtractor.exe
+
+⚠️ AÇÃO NECESSÁRIA: Instalar Navegador Chromium
+
+O executável agora está funcionando corretamente, mas precisa do navegador Chromium instalado no sistema.
+
+========================================
+COMO INSTALAR O CHROMIUM:
+========================================
+
+1. Abra o Prompt de Comando (CMD) ou PowerShell
+
+2. Execute o comando:
+
+   python -m playwright install chromium
+
+3. Aguarde o download terminar (~150MB, 2-5 minutos)
+
+4. Pronto! Agora você pode usar o LeadExtractor.exe
+
+========================================
+TESTANDO O EXECUTÁVEL:
+========================================
+
+1. Vá para a pasta: lead-extractor-app\dist\
+
+2. Execute: LeadExtractor.exe
+
+3. Se o Chromium NÃO estiver instalado:
+   - Vai mostrar uma mensagem clara explicando como instalar
+   - Siga as instruções na tela
+
+4. Se o Chromium estiver instalado:
+   - O programa vai abrir normalmente
+   - Você pode extrair leads sem problemas!
+
+========================================
+PRÓXIMOS PASSOS:
+========================================
+
+1. Instale o Chromium (comando acima)
+
+2. Teste o executável
+
+3. Se funcionar, execute:
+   python create_zip_from_here.py
+
+4. Isso vai criar o ZIP atualizado em:
+   ..\landing-page\public\lead-extractor.zip
+
+5. Faça commit e push para o GitHub
+
+========================================
+OBSERVAÇÕES IMPORTANTES:
+========================================
+
+- O navegador Chromium é instalado NO SISTEMA DO USUÁRIO, não dentro do executável
+- Isso mantém o executável pequeno (~89 MB)
+- O usuário precisa instalar o Chromium UMA VEZ apenas
+- Depois disso, o programa funciona normalmente
+
+========================================
+DÚVIDAS?
+========================================
+
+Leia os arquivos:
+- LEIA-ME-PLAYWRIGHT.md (explicação completa)
+- SOLUCAO_PLAYWRIGHT.md (detalhes técnicos)
+
+Ou execute:
+- INSTALAR_PLAYWRIGHT_E_RECOMPILAR.bat (faz tudo automaticamente)
