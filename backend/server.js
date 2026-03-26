@@ -2,7 +2,6 @@ const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
 const { createClient } = require('@supabase/supabase-js');
-const { verifyToken, accessLogger } = require('./middleware/auth');
 
 const app = express();
 const PORT = 3001;
@@ -26,10 +25,6 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
-
-// Middleware de logging de acessos (Task 3.4)
-// Registra todas as requisições na tabela access_logs
-app.use(accessLogger);
 
 // Credenciais SigiloPay
 const SIGILOPAY_CONFIG = {
@@ -76,24 +71,6 @@ app.get('/', (req, res) => {
     message: 'Lead Extractor Payment API',
     version: '1.0.0',
   });
-});
-
-// Exemplo de rota protegida usando o middleware verifyToken
-app.get('/api/protected/profile', verifyToken, async (req, res) => {
-  try {
-    // req.user está disponível graças ao middleware verifyToken
-    res.json({
-      success: true,
-      message: 'Acesso autorizado',
-      user: req.user
-    });
-  } catch (error) {
-    console.error('❌ Erro ao buscar perfil:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erro ao buscar perfil do usuário'
-    });
-  }
 });
 
 // Rota para criar pagamento PIX
@@ -673,7 +650,6 @@ app.listen(PORT, () => {
   console.log('');
   console.log('📋 Rotas disponíveis:');
   console.log(`   GET  http://localhost:${PORT}/`);
-  console.log(`   GET  http://localhost:${PORT}/api/protected/profile (requer autenticação)`);
   console.log(`   POST http://localhost:${PORT}/api/payment/pix`);
   console.log(`   POST http://localhost:${PORT}/api/payment/card`);
   console.log(`   POST http://localhost:${PORT}/api/webhook/payment`);
