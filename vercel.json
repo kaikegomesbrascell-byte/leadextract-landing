@@ -6,6 +6,10 @@
   "framework": "vite",
   "rewrites": [
     {
+      "source": "/api/payment-pix",
+      "destination": "/api/payment-pix.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
