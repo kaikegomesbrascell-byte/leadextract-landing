@@ -30,7 +30,23 @@ Sistema completo de login e gerenciamento de assinaturas integrado ao Supabase c
 ### 1. Configurar Supabase
 
 1. Acesse [supabase.com](https://supabase.com) e crie um projeto
-2. Vá em **SQL Editor** e execute o script `sql/create_auth_tables.sql`
+2. Vá em **SQL Editor** e execute o script:
+   
+   **OPÇÃO 1 (Recomendada):** Execute `sql/create_tables_only.sql`
+   - Este arquivo contém APENAS as tabelas essenciais
+   - Sem funções complexas que podem dar erro
+   - Tudo funciona via código TypeScript
+   
+   **OPÇÃO 2 (Completa):** Execute `sql/create_auth_tables.sql`
+   - Inclui funções SQL auxiliares
+   - Se der erro nas funções, não tem problema
+   - As tabelas são o mais importante
+   
+   **OPÇÃO 3 (Funções Separadas):** Execute `sql/create_functions_simple.sql`
+   - Execute DEPOIS das tabelas
+   - Funções opcionais para otimização
+   - Se der erro, ignore - não são essenciais
+
 3. Copie as credenciais em **Project Settings > API**
 
 ### 2. Variáveis de Ambiente
