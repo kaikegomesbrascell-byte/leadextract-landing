@@ -464,7 +464,12 @@
         async function processPixPayment(name, email, cpf, phone) {
             const identifier = `receitas-fit-${Date.now()}`;
             
-            const response = await fetch('/api/payment-pix', {
+            // Detectar se está em produção ou local
+            const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+                ? 'http://localhost:3000/api/payment-pix'  // Local (precisa do servidor rodando)
+                : '/api/payment-pix';  // Produção (Vercel)
+            
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
