@@ -175,10 +175,13 @@ module.exports = async (req, res) => {
     // 3. Criar subscription com status 'pending' (conforme especificação)
     let subscriptionData;
     try {
+      // Se não conseguiu criar user_id, usar o customer.id como fallback
+      const subscriptionUserId = userId || customerData.id;
+      
       const { data, error } = await supabase
         .from('subscriptions')
         .insert({
-          user_id: userId,
+          user_id: subscriptionUserId,
           plan: plan,
           status: 'pending', // IMPORTANTE: status pending até webhook confirmar
           started_at: null, // Será definido pelo webhook
@@ -187,7 +190,10 @@ module.exports = async (req, res) => {
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('❌ Erro detalhado ao criar subscription:', error);
+        throw error;
+      }
       subscriptionData = data;
       console.log('✅ Subscription criada (pending):', subscriptionData.id);
     } catch (dbError) {
@@ -195,6 +201,7 @@ module.exports = async (req, res) => {
       return res.status(500).json({
         success: false,
         message: 'Erro ao criar assinatura',
+        error: dbError.message || dbError,
       });
     }
 
