@@ -420,71 +420,84 @@
         async function processPixPayment(name, email, cpf, phone) {
             const identifier = `receitas-fit-${Date.now()}`;
             
-            const response = await fetch('/api/payment-pix', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    identifier: identifier,
-                    amount: 29.87,
-                    plan: 'standard', // ou 'premium' dependendo do plano escolhido
-                    client: {
-                        name: name,
-                        email: email,
-                        document: cpf,
-                        phone: phone || undefined
+            console.log('📤 Enviando requisição para /api/payment-pix...');
+            
+            try {
+                const response = await fetch('/api/payment-pix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
                     },
-                    expiresIn: 3600
-                })
-            });
+                    body: JSON.stringify({
+                        identifier: identifier,
+                        amount: 29.87,
+                        plan: 'standard',
+                        client: {
+                            name: name,
+                            email: email,
+                            document: cpf,
+                            phone: phone || undefined
+                        },
+                        expiresIn: 3600
+                    })
+                });
 
-            const data = await response.json();
+                console.log('📥 Status da resposta:', response.status, response.statusText);
 
-            if (!response.ok) {
-                throw new Error(data.message || 'Erro ao processar pagamento');
-            }
+                const data = await response.json();
+                console.log('📦 Dados recebidos:', data);
 
-            console.log('✅ Resposta do servidor:', data);
+                if (!response.ok) {
+                    console.error('❌ Erro na resposta:', data);
+                    throw new Error(data.message || `Erro ${response.status}: ${response.statusText}`);
+                }
 
-            // Extrair QR Code da resposta (pode vir em diferentes formatos)
-            let qrCodeBase64 = null;
-            let pixCode = null;
+                // Extrair QR Code da resposta (pode vir em diferentes formatos)
+                let qrCodeBase64 = null;
+                let pixCode = null;
 
-            if (data.pix) {
-                // Tentar diferentes formatos de resposta do SigiloPay
-                qrCodeBase64 = data.pix.base64 || data.pix.qr_code || data.pix.qrCode;
-                pixCode = data.pix.code || data.pix.pix_key || data.pix.pixKey;
-            }
+                if (data.pix) {
+                    // Tentar diferentes formatos de resposta do SigiloPay
+                    qrCodeBase64 = data.pix.base64 || data.pix.qr_code || data.pix.qrCode || data.pix.image;
+                    pixCode = data.pix.code || data.pix.pix_key || data.pix.pixKey || data.pix.payload;
+                    
+                    console.log('🔍 QR Code encontrado:', !!qrCodeBase64);
+                    console.log('🔍 Código PIX encontrado:', !!pixCode);
+                }
 
-            if (qrCodeBase64 && pixCode) {
-                document.getElementById('loading').classList.remove('show');
-                
-                // Se o base64 já inclui o prefixo data:image, usar direto
-                if (qrCodeBase64.startsWith('data:image')) {
-                    document.getElementById('qrCodeImage').src = qrCodeBase64;
+                if (qrCodeBase64 && pixCode) {
+                    document.getElementById('loading').classList.remove('show');
+                    
+                    // Se o base64 já inclui o prefixo data:image, usar direto
+                    if (qrCodeBase64.startsWith('data:image')) {
+                        document.getElementById('qrCodeImage').src = qrCodeBase64;
+                    } else {
+                        document.getElementById('qrCodeImage').src = `data:image/png;base64,${qrCodeBase64}`;
+                    }
+                    
+                    document.getElementById('pixCode').textContent = pixCode;
+                    pixCodeText = pixCode;
+                    document.getElementById('userEmail').textContent = email;
+                    document.getElementById('qrCodeContainer').classList.add('show');
+                    
+                    // Salvar informações da assinatura no localStorage
+                    if (data.subscription) {
+                        localStorage.setItem('subscriptionId', data.subscription.id);
+                        localStorage.setItem('subscriptionStatus', data.subscription.status);
+                        console.log('✅ Assinatura criada:', data.subscription);
+                    }
+                    
+                    setTimeout(() => {
+                        document.getElementById('qrCodeContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 100);
                 } else {
-                    document.getElementById('qrCodeImage').src = `data:image/png;base64,${qrCodeBase64}`;
+                    console.error('❌ Dados do QR Code incompletos');
+                    console.error('Resposta completa:', JSON.stringify(data, null, 2));
+                    throw new Error('QR Code não foi gerado. Verifique o console para mais detalhes.');
                 }
-                
-                document.getElementById('pixCode').textContent = pixCode;
-                pixCodeText = pixCode;
-                document.getElementById('userEmail').textContent = email;
-                document.getElementById('qrCodeContainer').classList.add('show');
-                
-                // Salvar informações da assinatura no localStorage para verificação posterior
-                if (data.subscription) {
-                    localStorage.setItem('subscriptionId', data.subscription.id);
-                    localStorage.setItem('subscriptionStatus', data.subscription.status);
-                    console.log('📦 Assinatura criada:', data.subscription);
-                }
-                
-                setTimeout(() => {
-                    document.getElementById('qrCodeContainer').scrollIntoView({ behavior: 'smooth', block: 'center' });
-                }, 100);
-            } else {
-                console.error('❌ Dados do QR Code incompletos:', data);
-                throw new Error('QR Code não foi gerado. Tente novamente.');
+            } catch (fetchError) {
+                console.error('❌ Erro na requisição:', fetchError);
+                throw fetchError;
             }
         }
 

@@ -4,15 +4,12 @@
   "devCommand": "npm run dev",
   "installCommand": "npm install",
   "framework": "vite",
+  "functions": {
+    "api/**/*.js": {
+      "runtime": "nodejs20.x"
+    }
+  },
   "rewrites": [
-    {
-      "source": "/api/payment-pix",
-      "destination": "/api/payment-pix.js"
-    },
-    {
-      "source": "/api/webhook-sigilopay",
-      "destination": "/api/webhook-sigilopay.js"
-    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
@@ -32,7 +29,7 @@
         },
         {
           "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
+          "value": "Content-Type, Authorization, x-sigilopay-signature"
         }
       ]
     }

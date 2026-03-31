@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste API Payment PIX</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+        }
+        button {
+            background: #10B981;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #059669;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .success {
+            color: #10B981;
+        }
+        .error {
+            color: #EF4444;
+        }
+        .info {
+            color: #3B82F6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Teste da API Payment PIX</h1>
+        <p>Use este teste para verificar se a API está funcionando corretamente.</p>
+        
+        <button onclick="testAPI()">🚀 Testar API</button>
+        <button onclick="clearResult()">🗑️ Limpar</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type === 'error' ? 'error' : type === 'success' ? 'success' : 'info';
+            result.innerHTML += `<span class="${className}">[${timestamp}] ${message}</span>\n`;
+            result.scrollTop = result.scrollHeight;
+        }
+
+        function clearResult() {
+            document.getElementById('result').innerHTML = '';
+        }
+
+        async function testAPI() {
+            clearResult();
+            log('🔍 Iniciando teste da API...', 'info');
+            
+            const testData = {
+                identifier: `test-${Date.now()}`,
+                amount: 29.87,
+                plan: 'standard',
+                client: {
+                    name: 'João Silva Teste',
+                    email: 'teste@example.com',
+                    document: '12345678900',
+                    phone: '11999999999'
+                },
+                expiresIn: 3600
+            };
+
+            log('📤 Enviando dados:', 'info');
+            log(JSON.stringify(testData, null, 2), 'info');
+            log('', 'info');
+
+            try {
+                log('⏳ Fazendo requisição para /api/payment-pix...', 'info');
+                
+                const response = await fetch('/api/payment-pix', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(testData)
+                });
+
+                log(`📥 Status: ${response.status} ${response.statusText}`, response.ok ? 'success' : 'error');
+                log('', 'info');
+
+                const data = await response.json();
+                
+                log('📦 Resposta completa:', 'info');
+                log(JSON.stringify(data, null, 2), 'info');
+                log('', 'info');
+
+                if (response.ok) {
+                    log('✅ API funcionando corretamente!', 'success');
+                    
+                    if (data.pix) {
+                        log('', 'info');
+                        log('🔍 Verificando dados do PIX:', 'info');
+                        log(`  - QR Code (base64): ${data.pix.base64 ? '✅ Presente' : '❌ Ausente'}`, data.pix.base64 ? 'success' : 'error');
+                        log(`  - Código PIX: ${data.pix.code ? '✅ Presente' : '❌ Ausente'}`, data.pix.code ? 'success' : 'error');
+                        
+                        if (data.pix.qr_code) log(`  - qr_code: ✅ Presente`, 'success');
+                        if (data.pix.qrCode) log(`  - qrCode: ✅ Presente`, 'success');
+                        if (data.pix.pix_key) log(`  - pix_key: ✅ Presente`, 'success');
+                        if (data.pix.pixKey) log(`  - pixKey: ✅ Presente`, 'success');
+                    }
+                    
+                    if (data.subscription) {
+                        log('', 'info');
+                        log('📋 Subscription criada:', 'success');
+                        log(`  - ID: ${data.subscription.id}`, 'info');
+                        log(`  - Status: ${data.subscription.status}`, 'info');
+                        log(`  - Plano: ${data.subscription.plan}`, 'info');
+                    }
+                    
+                    if (data.payment) {
+                        log('', 'info');
+                        log('💳 Payment criado:', 'success');
+                        log(`  - ID: ${data.payment.id}`, 'info');
+                        log(`  - Status: ${data.payment.status}`, 'info');
+                    }
+                } else {
+                    log('❌ Erro na API:', 'error');
+                    log(`Mensagem: ${data.message || 'Erro desconhecido'}`, 'error');
+                    if (data.error) {
+                        log(`Detalhes: ${JSON.stringify(data.error, null, 2)}`, 'error');
+                    }
+                }
+            } catch (error) {
+                log('❌ Erro ao fazer requisição:', 'error');
+                log(error.message, 'error');
+                log(error.stack, 'error');
+            }
+        }
+
+        // Executar teste automaticamente ao carregar
+        window.addEventListener('load', () => {
+            log('✨ Página carregada. Clique em "Testar API" para começar.', 'info');
+        });
+    </script>
+</body>
+</html>
