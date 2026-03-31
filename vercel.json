@@ -1,46 +1,5 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install",
-  "framework": "vite",
-  "routes": [
-    {
-      "src": "/checkout.html",
-      "dest": "/checkout.html"
-    },
-    {
-      "src": "/checkout-premium.html",
-      "dest": "/checkout-premium.html"
-    },
-    {
-      "src": "/test-api.html",
-      "dest": "/test-api.html"
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "*"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, PUT, DELETE, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization, x-sigilopay-signature"
-        }
-      ]
-    }
-  ]
+  "framework": "vite"
 }
