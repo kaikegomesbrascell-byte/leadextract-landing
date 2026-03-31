@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Copy, Check, CreditCard, QrCode } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { authService, profileService, subscriptionService } from "@/lib/supabase";
+import { useAuth } from "@/hooks/useAuth";
 
 // Configuração da API
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 
@@ -25,6 +28,8 @@ type CheckoutFormData = {
 };
 
 export const CheckoutModal = ({ open, onOpenChange, planAmount = 97, planName = "Plano Start" }: CheckoutModalProps) => {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [step, setStep] = useState<1 | 2 | 3>(1);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -181,6 +186,63 @@ export const CheckoutModal = ({ open, onOpenChange, planAmount = 97, planName = 
     alert(message);
   };
 
+  // Função para criar/registrar usuário e assinatura
+  const createUserAndSubscription = async () => {
+    try {
+      let userId = user?.id;
+
+      // Se não estiver logado, criar conta
+      if (!userId) {
+        const { data: signUpData, error: signUpError } = await authService.signUp(
+          formData.email,
+          `temp_${Date.now()}`, // Senha temporária
+          formData.name
+        );
+
+        if (signUpError) {
+          console.error("Erro ao criar usuário:", signUpError);
+          return null;
+        }
+
+        userId = signUpData.user?.id;
+
+        // Criar perfil
+        if (userId) {
+          await profileService.createProfile(
+            userId,
+            formData.name,
+            formData.phone,
+            formData.cpf
+          );
+        }
+      }
+
+      // Criar assinatura
+      if (userId) {
+        const plan = planAmount === 97 ? 'standard' : 'premium';
+        
+        const { data: subscription, error: subError } = await subscriptionService.createSubscription(
+          userId,
+          plan,
+          null // null = controle manual de expiração
+        );
+
+        if (subError) {
+          console.error("Erro ao criar assinatura:", subError);
+          return null;
+        }
+
+        console.log("✅ Assinatura criada com sucesso:", subscription);
+        return subscription;
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Erro ao criar usuário e assinatura:", error);
+      return null;
+    }
+  };
+
   const handlePaymentMethodSelect = async (method: "pix") => {
     setCardErrorMessage("");
     setPaymentMethod(method);
@@ -308,6 +370,10 @@ export const CheckoutModal = ({ open, onOpenChange, planAmount = 97, planName = 
 
         setPixData(newPixData);
         persistState(3, newPixData, formData, "pix");
+        
+        // 🎯 CRIAR USUÁRIO E ASSINATURA APÓS GERAR PIX
+        await createUserAndSubscription();
+        
         setStep(3);
       } catch (error) {
         console.error("Erro no checkout PIX:", error);
@@ -524,13 +590,25 @@ export const CheckoutModal = ({ open, onOpenChange, planAmount = 97, planName = 
               </ol>
             </div>
 
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={handleClose}
-            >
-              Fechar
-            </Button>
+            <div className="space-y-2">
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                onClick={() => {
+                  handleClose();
+                  navigate('/dashboard');
+                }}
+              >
+                Ir para Dashboard
+              </Button>
+              
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={handleClose}
+              >
+                Fechar
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>

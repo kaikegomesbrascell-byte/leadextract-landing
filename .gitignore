@@ -1,102 +1,54 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
+# Dependências
+node_modules/
+
+# Ambientes virtuais Python
+.venv/
+venv/
+env/
+
+# Pastas antigas do LeadExtract (não fazer commit)
+backend/
 build/
-develop-eggs/
+build_system/
 dist/
 downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
+extracoes/
+landing-app/
+landing-page/
+landing-page-v6/
+lead-extractor-app/
+leadextract_engine/
+leadextract_pro/
+public/
+sql/
+src/
+.claude/
+.vscode/
 
-# Virtual Environment
-venv/
-ENV/
-env/
-.venv
+# Variáveis de ambiente
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
 
 # IDEs
-.vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# OS
-.DS_Store
-Thumbs.db
-desktop.ini
-
-# Logs
-*.log
-logs/
-
-# Database
-*.db
-*.sqlite
-*.sqlite3
-
-# Cache
-cache/
-*.cache
-
-# Playwright
-.pytest_cache/
-playwright/.auth/
-
-# Node modules
-node_modules/
-package-lock.json
-
-# Environment variables
-.env
-.env.local
-.env.*.local
-
-# Build outputs
-build/
+# Build
 dist/
-*.exe
-*.zip
+build/
 
-# Temporary files
-temp/
-tmp/
-*.tmp
-
-# CSV/Excel outputs (opcional - remova se quiser versionar)
-*.csv
-*.xlsx
-leads_*.csv
-leads_enriquecidos.csv
-leads_exemplo.csv
-
-# Credentials (IMPORTANTE!)
-*credentials*.json
-*secrets*.json
-*keys*.json
-
-# Backups
-*-backup/
-*.bak
-
-# PDF (opcional)
-*.pdf
-
-# Checkpoints
-CHECKPOINT_*.md
-CORRECAO_*.md
-ATUALIZACAO_*.md
-GUIA_SERVIDOR_BACKEND.md
-RESUMO_MUDANCAS_FINAIS.md
+# Vercel
+.vercel
