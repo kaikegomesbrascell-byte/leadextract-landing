@@ -10,6 +10,10 @@
       "destination": "/api/payment-pix.js"
     },
     {
+      "source": "/api/webhook-sigilopay",
+      "destination": "/api/webhook-sigilopay.js"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

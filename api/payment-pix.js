@@ -66,13 +66,13 @@ module.exports = async (req, res) => {
   try {
     console.log('📥 Recebendo requisição PIX:', req.body);
 
-    const { identifier, amount, client, expiresIn } = req.body;
+    const { identifier, amount, client, plan, expiresIn } = req.body;
 
     // Validar dados obrigatórios
-    if (!identifier || !amount || !client) {
+    if (!identifier || !amount || !client || !plan) {
       return res.status(400).json({
         success: false,
-        message: 'Dados obrigatórios faltando: identifier, amount, client',
+        message: 'Dados obrigatórios faltando: identifier, amount, client, plan',
       });
     }
 
@@ -83,7 +83,15 @@ module.exports = async (req, res) => {
       });
     }
 
-    // Salvar ou atualizar cliente no Supabase
+    // Validar plano
+    if (!['standard', 'premium'].includes(plan)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Plano inválido. Use "standard" ou "premium"',
+      });
+    }
+
+    // 1. Salvar ou atualizar cliente no Supabase
     let customerData;
     try {
       const { data: existingCustomer, error: findError } = await supabase
@@ -128,10 +136,69 @@ module.exports = async (req, res) => {
         console.log('✅ Cliente criado:', customerData.id);
       }
     } catch (dbError) {
-      console.error('❌ Erro no banco de dados:', dbError);
+      console.error('❌ Erro no banco de dados (customer):', dbError);
+      return res.status(500).json({
+        success: false,
+        message: 'Erro ao salvar dados do cliente',
+      });
     }
 
-    // Preparar payload para SigiloPay
+    // 2. Criar ou buscar usuário no Supabase Auth
+    let userId;
+    try {
+      const { data: existingUser, error: userError } = await supabase.auth.admin.listUsers();
+      
+      const user = existingUser?.users?.find(u => u.email === client.email);
+      
+      if (user) {
+        userId = user.id;
+        console.log('✅ Usuário existente:', userId);
+      } else {
+        const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+          email: client.email,
+          email_confirm: true,
+          user_metadata: {
+            name: client.name,
+          }
+        });
+
+        if (createError) throw createError;
+        userId = newUser.user.id;
+        console.log('✅ Usuário criado:', userId);
+      }
+    } catch (authError) {
+      console.error('❌ Erro ao criar/buscar usuário:', authError);
+      // Continuar mesmo sem criar usuário no Auth
+      userId = null;
+    }
+
+    // 3. Criar subscription com status 'pending' (conforme especificação)
+    let subscriptionData;
+    try {
+      const { data, error } = await supabase
+        .from('subscriptions')
+        .insert({
+          user_id: userId,
+          plan: plan,
+          status: 'pending', // IMPORTANTE: status pending até webhook confirmar
+          started_at: null, // Será definido pelo webhook
+          expires_at: null, // Planos vitalícios
+        })
+        .select()
+        .single();
+
+      if (error) throw error;
+      subscriptionData = data;
+      console.log('✅ Subscription criada (pending):', subscriptionData.id);
+    } catch (dbError) {
+      console.error('❌ Erro ao criar subscription:', dbError);
+      return res.status(500).json({
+        success: false,
+        message: 'Erro ao criar assinatura',
+      });
+    }
+
+    // 4. Preparar payload para SigiloPay
     const payload = {
       identifier,
       amount,
@@ -146,42 +213,53 @@ module.exports = async (req, res) => {
 
     console.log('📤 Enviando para SigiloPay:', payload);
 
-    // Fazer requisição para SigiloPay com retry
+    // 5. Fazer requisição para SigiloPay com retry
     const sigiloResponseData = await requestPixWithRetry(payload);
 
     console.log('✅ Resposta SigiloPay:', sigiloResponseData);
 
-    // Salvar pagamento no Supabase
-    if (customerData) {
-      try {
-        const { data: paymentData, error: paymentError } = await supabase
-          .from('payments')
-          .insert({
-            customer_id: customerData.id,
-            amount: amount,
-            method: 'pix',
-            status: 'pending',
-            pix_qr_code: sigiloResponseData.qr_code || sigiloResponseData.pix?.qrCode || null,
-            pix_key: sigiloResponseData.pix_key || sigiloResponseData.pix?.code || null,
-            sigilopay_id: sigiloResponseData.id || identifier,
-          })
-          .select()
-          .single();
+    // 6. Salvar pagamento no Supabase com subscription_id
+    let paymentData;
+    try {
+      const { data, error: paymentError } = await supabase
+        .from('payments')
+        .insert({
+          customer_id: customerData.id,
+          subscription_id: subscriptionData.id, // IMPORTANTE: relacionar com subscription
+          amount: amount,
+          method: 'pix',
+          status: 'pending',
+          pix_qr_code: sigiloResponseData.qr_code || sigiloResponseData.pix?.qrCode || null,
+          pix_key: sigiloResponseData.pix_key || sigiloResponseData.pix?.code || null,
+          sigilopay_id: sigiloResponseData.id || identifier,
+        })
+        .select()
+        .single();
 
-        if (paymentError) {
-          console.error('❌ Erro ao salvar pagamento:', paymentError);
-        } else {
-          console.log('✅ Pagamento salvo:', paymentData.id);
-        }
-      } catch (dbError) {
-        console.error('❌ Erro ao salvar pagamento no DB:', dbError);
-      }
+      if (paymentError) throw paymentError;
+      paymentData = data;
+      console.log('✅ Pagamento salvo:', paymentData.id);
+    } catch (dbError) {
+      console.error('❌ Erro ao salvar pagamento no DB:', dbError);
+      return res.status(500).json({
+        success: false,
+        message: 'Erro ao salvar pagamento',
+      });
     }
 
-    // Retornar resposta para o frontend
+    // 7. Retornar resposta para o frontend
     return res.status(200).json({
       success: true,
       pix: sigiloResponseData,
+      subscription: {
+        id: subscriptionData.id,
+        status: subscriptionData.status,
+        plan: subscriptionData.plan,
+      },
+      payment: {
+        id: paymentData.id,
+        status: paymentData.status,
+      }
     });
 
   } catch (error) {

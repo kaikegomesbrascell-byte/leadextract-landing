@@ -1,0 +1,38 @@
+✅ Vercel CLI Instalado!
+
+Agora execute estes comandos:
+
+1. Fazer login na Vercel:
+   vercel login
+
+2. Fazer deploy:
+   vercel --prod
+
+3. Responda as perguntas:
+   - Set up and deploy? Digite: Y
+   - Which scope? Pressione: Enter
+   - Link to existing project? Digite: Y (se já existe) ou N (se é novo)
+   - What's your project's name? Digite: receitas-fit
+   - In which directory is your code located? Pressione: Enter
+
+4. Aguarde o deploy terminar
+
+5. A Vercel mostrará a URL:
+   ✅ Production: https://seu-projeto.vercel.app
+
+6. Acesse essa URL no navegador!
+
+---
+
+IMPORTANTE: Se pedir para adicionar variáveis de ambiente depois, execute:
+
+vercel env add VITE_SUPABASE_URL
+vercel env add VITE_SUPABASE_ANON_KEY  
+vercel env add SUPABASE_SERVICE_ROLE_KEY
+vercel env add SIGILOPAY_PUBLIC_KEY
+vercel env add SIGILOPAY_SECRET_KEY
+
+Para cada uma, cole o valor do seu .env e escolha: Production, Preview, Development
+
+Depois faça redeploy:
+vercel --prod
